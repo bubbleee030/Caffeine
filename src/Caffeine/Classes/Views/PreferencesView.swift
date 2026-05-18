@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PreferencesView: View {
     @ObservedObject var viewModel: CaffeineViewModel
+    @State private var loginManager = LaunchAtLoginManager.shared
     @AppStorage(PreferenceKeys.defaultDuration) private var defaultDuration = 0
     @AppStorage(PreferenceKeys.activateAtLaunch) private var activateAtLaunch = false
     @AppStorage(PreferenceKeys.suppressLaunchMessage) private var suppressLaunchMessage = false
@@ -67,6 +68,12 @@ struct PreferencesView: View {
 
             // Checkboxes
             VStack(alignment: .leading, spacing: 8) {
+                Toggle("Launch at Login", isOn: Binding(
+                    get: { self.loginManager.isEnabled },
+                    set: { _ = self.loginManager.setEnabled($0) }
+                ))
+                .font(.system(size: 13))
+
                 Toggle("Activate when starting Caffeine", isOn: self.$activateAtLaunch)
                     .font(.system(size: 13))
 
@@ -121,6 +128,7 @@ struct PreferencesView: View {
         .padding(.horizontal, 20)
         .frame(width: 640)
         .fixedSize(horizontal: false, vertical: true)
+        .onAppear { self.loginManager.refresh() }
     }
 }
 

@@ -22,6 +22,7 @@ let package = Package(
             name: "CaffeineCore",
             path: "src/Caffeine/Classes/Models",
             sources: [
+                "LaunchAtLoginManager.swift",
                 "LaunchItemBackend.swift",
                 "PowerAssertionBackend.swift",
             ]
