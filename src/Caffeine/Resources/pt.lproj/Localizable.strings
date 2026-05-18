@@ -31,6 +31,9 @@
 "Show this message when starting Caffeine" = "Mostrar esta mensagem ao iniciar o Caffeine";
 "Keep apps active" = "Manter apps ativas";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Impede que as apps fiquem inativas e que a proteção de ecrã seja iniciada.";
+"Launch at Login" = "Iniciar ao iniciar sessão";
+"Allow Mac to run with lid closed" = "Permitir que o Mac funcione com a tampa fechada";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Apenas funciona ligado à corrente. Com bateria, o macOS pode adormecer quando a tampa for fechada.";
 "Close" = "Fechar";
 
 /* Menu additions */

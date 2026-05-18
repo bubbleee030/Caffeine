@@ -31,6 +31,9 @@
 "Show this message when starting Caffeine" = "Показувати це повідомлення при запуску Caffeine";
 "Keep apps active" = "Тримати застосунки активними";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Не дає застосункам переходити в неактивний режим і запускатися заставці.";
+"Launch at Login" = "Запускати під час входу";
+"Allow Mac to run with lid closed" = "Дозволити роботу із закритою кришкою";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Працює лише від мережі. Від акумулятора macOS може заснути після закриття кришки.";
 "Close" = "Закрити";
 
 /* Menu additions */

@@ -1,0 +1,47 @@
+/* Activation durations */
+"1 minute" = "1 分鐘";
+"5 minutes" = "5 分鐘";
+"10 minutes" = "10 分鐘";
+"15 minutes" = "15 分鐘";
+"30 minutes" = "30 分鐘";
+"1 hour" = "1 小時";
+"2 hours" = "2 小時";
+"5 hours" = "5 小時";
+"Indefinitely" = "無限期";
+
+/* Status messages */
+"Caffeine is active" = "Caffeine 已啟用";
+"%d minutes" = "%d 分鐘";
+"%d seconds" = "%d 秒";
+
+/* Menu items */
+"Check for Updates..." = "檢查更新…";
+"Preferences..." = "偏好設定…";
+"About Caffeine" = "關於 Caffeine";
+"Quit" = "結束";
+
+/* Preferences instructions */
+"Caffeine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Caffeine 已經在執行。你可以在選單列右側找到它的圖示。點按可停用自動睡眠，再次點按即可重新啟用自動睡眠。";
+"Right-click (or ⌃-click) the menu bar icon to show the Caffeine menu." = "在選單列圖示上按右鍵（或按住 ⌃ 鍵並點按）即可顯示 Caffeine 選單。";
+
+/* Preferences labels */
+"Default duration:" = "預設時長：";
+"Activate when starting Caffeine" = "啟動 Caffeine 時自動啟用";
+"Deactivate when device goes to sleep manually" = "手動進入睡眠時停用";
+"Show this message when starting Caffeine" = "啟動 Caffeine 時顯示此訊息";
+"Keep apps active" = "保持 App 活躍";
+"Prevents apps from becoming inactive and the screen saver from starting." = "防止 App 變為非活躍狀態，並阻止螢幕保護程式啟動。";
+"Launch at Login" = "登入時啟動";
+"Allow Mac to run with lid closed" = "闔蓋時保持運作";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "僅在接通電源時生效。使用電池時，macOS 仍可能在闔蓋後進入睡眠。";
+"Close" = "關閉";
+
+/* Menu additions */
+"Activate for" = "啟用時長";
+"Welcome to Caffeine" = "歡迎使用 Caffeine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\n原始碼：\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Caffeine prevents sleep" = "Caffeine 防止睡眠";
