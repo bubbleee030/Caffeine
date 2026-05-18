@@ -64,6 +64,12 @@ iOSInjectionProject/
 
 .DS_Store
 *.swp
+
+# Swift Package Manager (root Package.swift is for tests; build artifacts are local)
+.build/
+.swiftpm/
+Package.resolved
+
 /sparkle/framework/bin
 /sparkle/framework/CHANGELOG
 /sparkle/framework/INSTALL
