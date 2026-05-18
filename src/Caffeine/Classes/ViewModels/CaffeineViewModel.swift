@@ -33,6 +33,17 @@ class CaffeineViewModel: ObservableObject {
 
         self.setupObservers()
 
+        #if DEBUG
+        // Test hook: integration script sets CA_TEST_AUTOACTIVATE=lid-closed
+        // (or any other value) to force activation on launch with a known
+        // lid-close flag. Compiled out in Release.
+        if let mode = ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] {
+            UserDefaults.standard.set(mode == "lid-closed", forKey: PreferenceKeys.allowLidClose)
+            self.activate()
+            return
+        }
+        #endif
+
         // Check if we should activate at launch
         if UserDefaults.standard.bool(forKey: PreferenceKeys.activateAtLaunch) {
             self.activate()
@@ -108,11 +119,18 @@ class CaffeineViewModel: ObservableObject {
         }
 
         self.isActive = true
-        SleepPreventionManager.shared.preventSleep()
+        let allowLidClose = UserDefaults.standard.bool(forKey: PreferenceKeys.allowLidClose)
+        SleepPreventionManager.shared.preventSleep(allowLidClose: allowLidClose)
 
         if UserDefaults.standard.bool(forKey: PreferenceKeys.keepAppsActive) {
             ActivitySimulator.shared.startMonitoring()
         }
+    }
+
+    /// Updates the lid-close flag and applies it live if currently active.
+    func setAllowLidClose(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: PreferenceKeys.allowLidClose)
+        SleepPreventionManager.shared.updateAllowLidClose(enabled)
     }
 
     /// Deactivates Caffeine
@@ -212,4 +230,5 @@ enum PreferenceKeys {
     static let suppressLaunchMessage = "CASuppressLaunchMessage"
     static let deactivateOnManualSleep = "CADeactivateOnManualSleep"
     static let keepAppsActive = "CAKeepAppsActive"
+    static let allowLidClose = "CAAllowLidClose"
 }

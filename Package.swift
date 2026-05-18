@@ -25,6 +25,7 @@ let package = Package(
                 "LaunchAtLoginManager.swift",
                 "LaunchItemBackend.swift",
                 "PowerAssertionBackend.swift",
+                "SleepPreventionManager.swift",
             ]
         ),
         .testTarget(

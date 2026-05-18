@@ -15,6 +15,7 @@ struct PreferencesView: View {
     @AppStorage(PreferenceKeys.suppressLaunchMessage) private var suppressLaunchMessage = false
     @AppStorage(PreferenceKeys.deactivateOnManualSleep) private var deactivateOnManualSleep = false
     @AppStorage(PreferenceKeys.keepAppsActive) private var keepAppsActive = false
+    @AppStorage(PreferenceKeys.allowLidClose) private var allowLidClose = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -85,6 +86,20 @@ struct PreferencesView: View {
                     set: { self.suppressLaunchMessage = !$0 }
                 ))
                 .font(.system(size: 13))
+
+                Toggle("Allow Mac to run with lid closed", isOn: Binding(
+                    get: { self.allowLidClose },
+                    set: { newValue in
+                        self.allowLidClose = newValue
+                        self.viewModel.setAllowLidClose(newValue)
+                    }
+                ))
+                .font(.system(size: 13))
+
+                Text("Works on AC power. On battery, macOS may still sleep when the lid is closed.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 20)
 
                 Divider()
                     .padding(.vertical, 4)
