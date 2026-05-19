@@ -37,6 +37,26 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# Polls `pmset -g assertions` for up to ASSERTION_POLL_TIMEOUT seconds (default 30)
+# until at least one Caffeine-owned assertion appears, or fails. Returns the
+# matched output on stdout.
+poll_for_caffeine_assertions() {
+    local timeout="${ASSERTION_POLL_TIMEOUT:-30}"
+    local interval=1
+    local elapsed=0
+    local out=""
+    while ((elapsed < timeout)); do
+        out=$(pmset -g assertions | grep -E "\(Caffeine\)" || true)
+        if [[ -n "$out" ]]; then
+            printf '%s\n' "$out"
+            return 0
+        fi
+        sleep "$interval"
+        elapsed=$((elapsed + interval))
+    done
+    return 1
+}
+
 run_case() {
     local mode="$1"
     local expect_present="$2"
@@ -45,12 +65,10 @@ run_case() {
     echo "==> Case: CA_TEST_AUTOACTIVATE=$mode"
     CA_TEST_AUTOACTIVATE="$mode" "$BINARY" &
     APP_PID=$!
-    sleep 3
 
     local out
-    out=$(pmset -g assertions | grep -E "\(Caffeine\)" || true)
-    if [[ -z "$out" ]]; then
-        echo "FAIL: no Caffeine-owned assertions in pmset output"
+    if ! out=$(poll_for_caffeine_assertions); then
+        echo "FAIL: no Caffeine-owned assertions appeared within ${ASSERTION_POLL_TIMEOUT:-30}s"
         pmset -g assertions | tail -50
         return 1
     fi
@@ -76,7 +94,6 @@ run_case() {
     kill "$APP_PID" 2>/dev/null || true
     wait "$APP_PID" 2>/dev/null || true
     APP_PID=""
-    sleep 1
 }
 
 run_case "lid-closed" "PreventUserIdleDisplaySleep PreventUserIdleSystemSleep PreventSystemSleep"

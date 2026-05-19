@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import Combine
 import Foundation
 import IOKit.pwr_mgt
 
@@ -32,6 +33,7 @@ public final class SleepPreventionManager {
     private var isUserSessionActive = true
     private var allowLidClose = false
     private var isActive = false
+    private var sessionObservers = Set<AnyCancellable>()
 
     public init(backend: any PowerAssertionBackend = IOKitPowerAssertionBackend.shared) {
         self.backend = backend
@@ -86,25 +88,40 @@ public final class SleepPreventionManager {
 
     private func refreshAssertions() {
         guard self.isUserSessionActive else { return }
-        self.releaseAll()
         let reason = String(localized: "Caffeine prevents sleep")
-        self.idleDisplayAssertionID = self.backend.create(
+
+        // Swap-then-release: hold both old and new IDs briefly so the kernel
+        // always sees at least one of each assertion type, even at the exact
+        // moment of refresh. Releasing first would leave a microsecond gap.
+        let newIdleDisplay = self.backend.create(
             type: kIOPMAssertPreventUserIdleDisplaySleep as String,
             reason: reason,
             timeout: 30
         )
-        self.idleSystemAssertionID = self.backend.create(
+        let newIdleSystem = self.backend.create(
             type: kIOPMAssertPreventUserIdleSystemSleep as String,
             reason: reason,
             timeout: 30
         )
-        if self.allowLidClose {
-            self.preventSystemAssertionID = self.backend.create(
+        let newPreventSystem: UInt32? = self.allowLidClose
+            ? self.backend.create(
                 type: kIOPMAssertionTypePreventSystemSleep as String,
                 reason: reason,
                 timeout: 30
             )
-        }
+            : nil
+
+        let oldIdleDisplay = self.idleDisplayAssertionID
+        let oldIdleSystem = self.idleSystemAssertionID
+        let oldPreventSystem = self.preventSystemAssertionID
+
+        self.idleDisplayAssertionID = newIdleDisplay
+        self.idleSystemAssertionID = newIdleSystem
+        self.preventSystemAssertionID = newPreventSystem
+
+        if let id = oldIdleDisplay { self.backend.release(id) }
+        if let id = oldIdleSystem { self.backend.release(id) }
+        if let id = oldPreventSystem { self.backend.release(id) }
     }
 
     private func releaseAll() {
@@ -117,30 +134,22 @@ public final class SleepPreventionManager {
     }
 
     private func setupWorkspaceNotifications() {
+        // Publisher + AnyCancellable so the NSWorkspace observers are removed
+        // automatically when the manager deallocates (test instances), matching
+        // CaffeineViewModel's pattern. A selector-based observer would persist
+        // forever because NotificationCenter retains its targets.
         let nc = NSWorkspace.shared.notificationCenter
 
-        nc.addObserver(
-            self,
-            selector: #selector(self.sessionDidResignActive),
-            name: NSWorkspace.sessionDidResignActiveNotification,
-            object: nil
-        )
+        nc.publisher(for: NSWorkspace.sessionDidResignActiveNotification)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in self?.isUserSessionActive = false }
+            }
+            .store(in: &self.sessionObservers)
 
-        nc.addObserver(
-            self,
-            selector: #selector(self.sessionDidBecomeActive),
-            name: NSWorkspace.sessionDidBecomeActiveNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    private func sessionDidResignActive() {
-        self.isUserSessionActive = false
-    }
-
-    @objc
-    private func sessionDidBecomeActive() {
-        self.isUserSessionActive = true
+        nc.publisher(for: NSWorkspace.sessionDidBecomeActiveNotification)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in self?.isUserSessionActive = true }
+            }
+            .store(in: &self.sessionObservers)
     }
 }

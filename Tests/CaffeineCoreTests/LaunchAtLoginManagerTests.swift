@@ -54,6 +54,20 @@ final class LaunchAtLoginManagerTests: XCTestCase {
         XCTAssertFalse(ok)
         XCTAssertEqual(backend.registerCalls, 1)
         XCTAssertFalse(manager.isEnabled, "register threw, so backend state stayed false; manager must mirror.")
+        XCTAssertNotNil(manager.lastError, "register threw; lastError must surface it for the UI to act on.")
+    }
+
+    func testSuccessClearsPreviousLastError() {
+        let backend = FakeLaunchItemBackend()
+        backend.registerError = FakeError.boom
+        let manager = LaunchAtLoginManager(backend: backend)
+        _ = manager.setEnabled(true)
+        XCTAssertNotNil(manager.lastError)
+
+        backend.registerError = nil
+        _ = manager.setEnabled(true)
+
+        XCTAssertNil(manager.lastError, "A subsequent successful call must clear the prior error.")
     }
 
     func testRefreshReadsBackendState() {
