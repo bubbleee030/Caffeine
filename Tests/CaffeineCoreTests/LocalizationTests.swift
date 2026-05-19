@@ -15,9 +15,9 @@ final class LocalizationTests: XCTestCase {
     /// file so tests work no matter where the repo is checked out.
     private var resourcesURL: URL {
         URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()           // CaffeineCoreTests/
-            .deletingLastPathComponent()           // Tests/
-            .deletingLastPathComponent()           // repo root
+            .deletingLastPathComponent() // CaffeineCoreTests/
+            .deletingLastPathComponent() // Tests/
+            .deletingLastPathComponent() // repo root
             .appendingPathComponent("src/Caffeine/Resources")
     }
 
@@ -60,7 +60,7 @@ final class LocalizationTests: XCTestCase {
         "Caffeine prevents sleep",
     ]
 
-    func testEveryLocaleParsesAndContainsAllKeys() throws {
+    func testEveryLocaleParsesAndContainsAllKeys() {
         for locale in self.expectedLocales {
             let stringsURL = self.resourcesURL
                 .appendingPathComponent("\(locale).lproj")
@@ -85,7 +85,7 @@ final class LocalizationTests: XCTestCase {
         }
     }
 
-    func testTraditionalChineseLocaleExistsAndIsDistinctFromSimplified() throws {
+    func testTraditionalChineseLocaleExistsAndIsDistinctFromSimplified() {
         let hantURL = self.resourcesURL
             .appendingPathComponent("zh-Hant.lproj")
             .appendingPathComponent("Localizable.strings")
@@ -95,8 +95,8 @@ final class LocalizationTests: XCTestCase {
 
         guard
             let hant = NSDictionary(contentsOf: hantURL) as? [String: String],
-            let hans = NSDictionary(contentsOf: hansURL) as? [String: String]
-        else {
+            let hans = NSDictionary(contentsOf: hansURL) as? [String: String] else
+        {
             XCTFail("zh-Hant or zh-Hans failed to parse")
             return
         }
@@ -104,6 +104,10 @@ final class LocalizationTests: XCTestCase {
         XCTAssertEqual(hant.keys.sorted(), hans.keys.sorted(), "zh-Hant must cover the same keys as zh-Hans")
         // The two scripts use different characters; a representative key must
         // not be identical across them.
-        XCTAssertNotEqual(hant["Quit"], hans["Quit"], "zh-Hant should use Traditional characters, not the Simplified value")
+        XCTAssertNotEqual(
+            hant["Quit"],
+            hans["Quit"],
+            "zh-Hant should use Traditional characters, not the Simplified value"
+        )
     }
 }

@@ -78,7 +78,7 @@ public final class SleepPreventionManager {
     /// Number of assertions currently held by the manager. Exposed for tests.
     public var heldAssertionCount: Int {
         [self.idleDisplayAssertionID, self.idleSystemAssertionID, self.preventSystemAssertionID]
-            .compactMap { $0 }
+            .compactMap(\.self)
             .count
     }
 
