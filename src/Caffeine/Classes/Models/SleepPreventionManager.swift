@@ -6,110 +6,169 @@
 //
 
 import AppKit
+import Combine
 import Foundation
 import IOKit.pwr_mgt
 
-/// Manages the core functionality of preventing system sleep
-final class SleepPreventionManager {
-    static let shared = SleepPreventionManager()
+/// Manages the core functionality of preventing system sleep.
+///
+/// Holds up to three IOKit power assertions while active:
+/// - `PreventUserIdleDisplaySleep` so the display does not dim from inactivity
+/// - `PreventUserIdleSystemSleep` so the system does not idle-sleep
+/// - `PreventSystemSleep` (only when the lid-close flag is on) so a portable
+///   Mac on AC power stays running with the lid closed
+///
+/// The assertion timer refreshes every 10 s with a 30 s assertion timeout so
+/// the windows always overlap (the previous 8 s timeout left a 2 s gap).
+@MainActor
+public final class SleepPreventionManager {
+    public static let shared = SleepPreventionManager()
 
-    private var sleepAssertionID: IOPMAssertionID?
+    private let backend: any PowerAssertionBackend
+
+    private var idleDisplayAssertionID: UInt32?
+    private var idleSystemAssertionID: UInt32?
+    private var preventSystemAssertionID: UInt32?
     private var assertionTimer: Timer?
     private var isUserSessionActive = true
+    private var allowLidClose = false
+    private var isActive = false
+    private var sessionObservers = Set<AnyCancellable>()
 
-    private init() {
+    public init(backend: any PowerAssertionBackend = IOKitPowerAssertionBackend.shared) {
+        self.backend = backend
         self.setupWorkspaceNotifications()
-    }
-
-    deinit {
-        releaseSleepAssertion()
-        assertionTimer?.invalidate()
-        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - Public Methods
 
-    /// Prevents the system from sleeping
-    func preventSleep() {
-        // Start or restart the assertion timer
+    /// Activates sleep prevention. Pass `allowLidClose: true` to also hold a
+    /// `PreventSystemSleep` assertion so the Mac stays running with the lid
+    /// closed (effective only on AC power).
+    public func preventSleep(allowLidClose: Bool) {
+        self.allowLidClose = allowLidClose
+        self.isActive = true
         self.assertionTimer?.invalidate()
         self.assertionTimer = Timer.scheduledTimer(
             withTimeInterval: 10.0,
             repeats: true
         ) { [weak self] _ in
-            self?.refreshSleepAssertion()
+            Task { @MainActor [weak self] in self?.refreshAssertions() }
         }
-        self.assertionTimer?.fire() // Fire immediately
+        self.refreshAssertions()
     }
 
-    /// Allows the system to sleep normally
-    func allowSleep() {
+    /// Updates the lid-close flag while active so the change takes effect on
+    /// the next refresh without re-activating from scratch. No-op when
+    /// inactive.
+    public func updateAllowLidClose(_ value: Bool) {
+        guard self.allowLidClose != value else { return }
+        self.allowLidClose = value
+        if self.isActive { self.refreshAssertions() }
+    }
+
+    /// Allows the system to sleep normally and releases every held assertion.
+    public func allowSleep() {
         self.assertionTimer?.invalidate()
         self.assertionTimer = nil
-        self.releaseSleepAssertion()
+        self.isActive = false
+        self.releaseAll()
+    }
+
+    // MARK: - Test introspection
+
+    /// Number of assertions currently held by the manager. Exposed for tests.
+    public var heldAssertionCount: Int {
+        [self.idleDisplayAssertionID, self.idleSystemAssertionID, self.preventSystemAssertionID]
+            .compactMap(\.self)
+            .count
     }
 
     // MARK: - Private Methods
 
-    private func refreshSleepAssertion() {
+    private func refreshAssertions() {
         guard self.isUserSessionActive else { return }
+        let reason = String(localized: "Caffeine prevents sleep")
 
-        // Release existing assertion
-        if let assertionID = sleepAssertionID {
-            IOPMAssertionRelease(assertionID)
-        }
-
-        // Create new assertion
-        var assertionID: IOPMAssertionID = 0
-        let reason = String(localized: "Caffeine prevents sleep") as CFString
-        let result = IOPMAssertionCreateWithDescription(
-            kIOPMAssertPreventUserIdleDisplaySleep as CFString,
-            reason,
-            nil as CFString?,
-            nil as CFString?,
-            nil as CFString?,
-            8, // Timeout after 8 seconds
-            nil as CFString?,
-            &assertionID
+        // Swap-then-release: hold both old and new IDs briefly so the kernel
+        // always sees at least one of each assertion type, even at the exact
+        // moment of refresh. Releasing first would leave a microsecond gap.
+        let newIdleDisplay = self.backend.create(
+            type: kIOPMAssertPreventUserIdleDisplaySleep as String,
+            reason: reason,
+            timeout: 30
         )
+        let newIdleSystem = self.backend.create(
+            type: kIOPMAssertPreventUserIdleSystemSleep as String,
+            reason: reason,
+            timeout: 30
+        )
+        let newPreventSystem: UInt32? = self.allowLidClose
+            ? self.backend.create(
+                type: kIOPMAssertionTypePreventSystemSleep as String,
+                reason: reason,
+                timeout: 30
+            )
+            : nil
 
-        if result == kIOReturnSuccess {
-            self.sleepAssertionID = assertionID
-        }
+        let oldIdleDisplay = self.idleDisplayAssertionID
+        let oldIdleSystem = self.idleSystemAssertionID
+        let oldPreventSystem = self.preventSystemAssertionID
+
+        self.idleDisplayAssertionID = newIdleDisplay
+        self.idleSystemAssertionID = newIdleSystem
+        self.preventSystemAssertionID = newPreventSystem
+
+        if let id = oldIdleDisplay { self.backend.release(id) }
+        if let id = oldIdleSystem { self.backend.release(id) }
+        if let id = oldPreventSystem { self.backend.release(id) }
     }
 
-    private func releaseSleepAssertion() {
-        if let assertionID = sleepAssertionID {
-            IOPMAssertionRelease(assertionID)
-            self.sleepAssertionID = nil
-        }
+    private func releaseAll() {
+        if let id = idleDisplayAssertionID { self.backend.release(id) }
+        if let id = idleSystemAssertionID { self.backend.release(id) }
+        if let id = preventSystemAssertionID { self.backend.release(id) }
+        self.idleDisplayAssertionID = nil
+        self.idleSystemAssertionID = nil
+        self.preventSystemAssertionID = nil
     }
 
     private func setupWorkspaceNotifications() {
-        let notificationCenter = NSWorkspace.shared.notificationCenter
+        // Publisher + AnyCancellable so the NSWorkspace observers are removed
+        // automatically when the manager deallocates (test instances), matching
+        // CaffeineViewModel's pattern. A selector-based observer would persist
+        // forever because NotificationCenter retains its targets.
+        let nc = NSWorkspace.shared.notificationCenter
 
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(self.sessionDidResignActive),
-            name: NSWorkspace.sessionDidResignActiveNotification,
-            object: nil
-        )
+        nc.publisher(for: NSWorkspace.sessionDidResignActiveNotification)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in self?.handleSessionResignActive() }
+            }
+            .store(in: &self.sessionObservers)
 
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(self.sessionDidBecomeActive),
-            name: NSWorkspace.sessionDidBecomeActiveNotification,
-            object: nil
-        )
+        nc.publisher(for: NSWorkspace.sessionDidBecomeActiveNotification)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in self?.handleSessionBecomeActive() }
+            }
+            .store(in: &self.sessionObservers)
     }
 
-    @objc
-    private func sessionDidResignActive() {
+    /// Internal (not private) so tests can drive these directly without
+    /// posting a real NSWorkspace notification and waiting for the Task
+    /// @MainActor hop. Not part of the public API.
+    func handleSessionResignActive() {
         self.isUserSessionActive = false
+        // Release immediately so the manager's stored IDs match the kernel's
+        // view of the world (the kernel will time them out anyway after 30 s).
+        // Without this, `heldAssertionCount` lies during the inactive window
+        // and re-engagement on resume waits up to 10 s for the next timer fire.
+        self.releaseAll()
     }
 
-    @objc
-    private func sessionDidBecomeActive() {
+    func handleSessionBecomeActive() {
         self.isUserSessionActive = true
+        // Re-engage immediately on resume rather than waiting up to 10 s for
+        // the timer's next tick.
+        if self.isActive { self.refreshAssertions() }
     }
 }

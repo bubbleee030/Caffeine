@@ -31,6 +31,9 @@
 "Show this message when starting Caffeine" = "Caffeine 시작 시 이 메시지 표시";
 "Keep apps active" = "앱 활성 상태 유지";
 "Prevents apps from becoming inactive and the screen saver from starting." = "앱이 비활성 상태가 되거나 화면 보호기가 시작되는 것을 방지합니다.";
+"Launch at Login" = "로그인 시 시작";
+"Allow Mac to run with lid closed" = "덮개를 닫아도 실행 유지";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "전원이 연결된 경우에만 작동합니다. 배터리 사용 시에는 덮개를 닫으면 macOS가 잠들 수 있습니다.";
 "Close" = "닫기";
 
 /* Menu additions */
@@ -38,7 +41,7 @@
 "Welcome to Caffeine" = "Caffeine에 오신 것을 환영합니다";
 
 /* About credits */
-"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\n소스 코드:\nhttps://github.caffeine-app.net";
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\n소스 코드:\nhttps://github.com/bubbleee030/Caffeine";
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine이 잠자기를 방지합니다";

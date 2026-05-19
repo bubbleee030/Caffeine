@@ -31,6 +31,9 @@
 "Show this message when starting Caffeine" = "Caffeine 起動時にこのメッセージを表示";
 "Keep apps active" = "アプリをアクティブに保つ";
 "Prevents apps from becoming inactive and the screen saver from starting." = "アプリが非アクティブになるのを防ぎ、スクリーンセーバーの起動を防止します。";
+"Launch at Login" = "ログイン時に起動";
+"Allow Mac to run with lid closed" = "蓋を閉じた状態でも実行を維持";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "電源接続時のみ有効です。バッテリー駆動時は蓋を閉じると macOS がスリープすることがあります。";
 "Close" = "閉じる";
 
 /* Menu additions */
@@ -38,7 +41,7 @@
 "Welcome to Caffeine" = "Caffeine へようこそ";
 
 /* About credits */
-"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nソースコード:\nhttps://github.caffeine-app.net";
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nソースコード:\nhttps://github.com/bubbleee030/Caffeine";
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine がスリープを防ぎます";

@@ -31,6 +31,9 @@
 "Show this message when starting Caffeine" = "Diese Nachricht beim Start von Caffeine anzeigen";
 "Keep apps active" = "Apps aktiv halten";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Verhindert, dass Apps inaktiv werden und der Bildschirmschoner startet.";
+"Launch at Login" = "Beim Anmelden starten";
+"Allow Mac to run with lid closed" = "Mac mit geschlossenem Deckel weiterlaufen lassen";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Funktioniert nur am Netzteil. Im Akkubetrieb kann macOS bei geschlossenem Deckel trotzdem in den Ruhezustand wechseln.";
 "Close" = "Schließen";
 
 /* Menu additions */
@@ -38,7 +41,7 @@
 "Welcome to Caffeine" = "Willkommen bei Caffeine";
 
 /* About credits */
-"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nQuellcode:\nhttps://github.caffeine-app.net";
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nQuellcode:\nhttps://github.com/bubbleee030/Caffeine";
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine verhindert den Ruhezustand";

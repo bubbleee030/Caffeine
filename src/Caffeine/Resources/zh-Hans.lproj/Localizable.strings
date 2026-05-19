@@ -31,6 +31,9 @@
 "Show this message when starting Caffeine" = "启动 Caffeine 时显示此消息";
 "Keep apps active" = "保持应用活跃";
 "Prevents apps from becoming inactive and the screen saver from starting." = "防止应用变为非活跃状态并阻止屏幕保护程序启动。";
+"Launch at Login" = "登录时启动";
+"Allow Mac to run with lid closed" = "合盖时保持运行";
+"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "仅在接通电源时生效。使用电池时，macOS 仍可能在合盖后进入睡眠。";
 "Close" = "关闭";
 
 /* Menu additions */
@@ -38,7 +41,7 @@
 "Welcome to Caffeine" = "欢迎使用 Caffeine";
 
 /* About credits */
-"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\n源代码：\nhttps://github.caffeine-app.net";
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\n源代码：\nhttps://github.com/bubbleee030/Caffeine";
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine 会阻止睡眠";

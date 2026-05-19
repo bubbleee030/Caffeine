@@ -9,11 +9,13 @@ import SwiftUI
 
 struct PreferencesView: View {
     @ObservedObject var viewModel: CaffeineViewModel
+    @State private var loginManager = LaunchAtLoginManager.shared
     @AppStorage(PreferenceKeys.defaultDuration) private var defaultDuration = 0
     @AppStorage(PreferenceKeys.activateAtLaunch) private var activateAtLaunch = false
     @AppStorage(PreferenceKeys.suppressLaunchMessage) private var suppressLaunchMessage = false
     @AppStorage(PreferenceKeys.deactivateOnManualSleep) private var deactivateOnManualSleep = false
     @AppStorage(PreferenceKeys.keepAppsActive) private var keepAppsActive = false
+    @AppStorage(PreferenceKeys.allowLidClose) private var allowLidClose = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -67,6 +69,12 @@ struct PreferencesView: View {
 
             // Checkboxes
             VStack(alignment: .leading, spacing: 8) {
+                Toggle("Launch at Login", isOn: Binding(
+                    get: { self.loginManager.isEnabled },
+                    set: { _ = self.loginManager.setEnabled($0) }
+                ))
+                .font(.system(size: 13))
+
                 Toggle("Activate when starting Caffeine", isOn: self.$activateAtLaunch)
                     .font(.system(size: 13))
 
@@ -78,6 +86,20 @@ struct PreferencesView: View {
                     set: { self.suppressLaunchMessage = !$0 }
                 ))
                 .font(.system(size: 13))
+
+                Toggle("Allow Mac to run with lid closed", isOn: Binding(
+                    get: { self.allowLidClose },
+                    set: { newValue in
+                        self.allowLidClose = newValue
+                        self.viewModel.setAllowLidClose(newValue)
+                    }
+                ))
+                .font(.system(size: 13))
+
+                Text("Works on AC power. On battery, macOS may still sleep when the lid is closed.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .padding(.leading, 20)
 
                 Divider()
                     .padding(.vertical, 4)
@@ -121,6 +143,7 @@ struct PreferencesView: View {
         .padding(.horizontal, 20)
         .frame(width: 640)
         .fixedSize(horizontal: false, vertical: true)
+        .onAppear { self.loginManager.refresh() }
     }
 }
 

@@ -7,8 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- "Launch at Login" preference, backed by `SMAppService.mainApp`.
+- "Allow Mac to run with lid closed" preference. When enabled, Caffeine additionally holds a `kIOPMAssertionTypePreventSystemSleep` assertion so a portable Mac on AC power keeps running with the lid closed.
+- Traditional Chinese (zh-Hant) localization.
+- Traditional Chinese README (`README.zh-Hant.md`) with a step-by-step tutorial for the two new toggles.
+- Swift Package (`Package.swift`) + `swift test` unit tests covering the new launch-item and power-assertion wiring.
+- `scripts/integration-test.sh` that builds the app and verifies `pmset -g assertions` reflects the expected types.
+
 ### Changed
 
+- Sleep prevention now also holds `kIOPMAssertPreventUserIdleSystemSleep` (previously display-idle only), so the whole system stays awake during idle — not just the display.
+- Bumped the IOPMAssertion timeout from 8 s to 30 s so the 10 s refresh window always overlaps (the previous values left a 2 s gap every cycle).
+- Rewrote `README.md` to point at this fork's releases and issue tracker; removed third-party support and download URLs.
 - Improved Ukrainian translation.
 
 ### Fixed

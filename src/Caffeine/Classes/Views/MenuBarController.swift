@@ -222,7 +222,7 @@ class MenuBarController: NSObject {
 
         let credits =
             String(
-                localized: "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net"
+                localized: "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine"
             )
 
         NSApp.orderFrontStandardAboutPanel(options: [
