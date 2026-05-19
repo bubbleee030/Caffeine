@@ -36,10 +36,13 @@ class CaffeineViewModel: ObservableObject {
         #if DEBUG
         // Test hook: integration script sets CA_TEST_AUTOACTIVATE=lid-closed
         // (or any other value) to force activation on launch with a known
-        // lid-close flag. Compiled out in Release.
+        // lid-close flag. Passes the value as an override so we don't write
+        // to the persistent UserDefaults from a test env var. Intentional
+        // early return so we don't pop the preferences window during a
+        // headless integration run — add future init above this guard, not
+        // below it. Compiled out in Release.
         if let mode = ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] {
-            UserDefaults.standard.set(mode == "lid-closed", forKey: PreferenceKeys.allowLidClose)
-            self.activate()
+            self.activate(allowLidCloseOverride: mode == "lid-closed")
             return
         }
         #endif
@@ -66,8 +69,13 @@ class CaffeineViewModel: ObservableObject {
         }
     }
 
-    /// Activates Caffeine with optional timeout
-    func activate(withTimeout timeout: TimeInterval? = nil) {
+    /// Activates Caffeine with optional timeout.
+    /// - Parameters:
+    ///   - timeout: optional duration before auto-deactivation.
+    ///   - allowLidCloseOverride: if non-nil, used instead of the stored
+    ///     `allowLidClose` preference. Intended for DEBUG test hooks that
+    ///     want to drive a known state without mutating UserDefaults.
+    func activate(withTimeout timeout: TimeInterval? = nil, allowLidCloseOverride: Bool? = nil) {
         // Use default duration if no timeout specified
         let duration: TimeInterval?
         if let timeout {
@@ -119,7 +127,8 @@ class CaffeineViewModel: ObservableObject {
         }
 
         self.isActive = true
-        let allowLidClose = UserDefaults.standard.bool(forKey: PreferenceKeys.allowLidClose)
+        let allowLidClose = allowLidCloseOverride
+            ?? UserDefaults.standard.bool(forKey: PreferenceKeys.allowLidClose)
         SleepPreventionManager.shared.preventSleep(allowLidClose: allowLidClose)
 
         if UserDefaults.standard.bool(forKey: PreferenceKeys.keepAppsActive) {
@@ -127,9 +136,10 @@ class CaffeineViewModel: ObservableObject {
         }
     }
 
-    /// Updates the lid-close flag and applies it live if currently active.
+    /// Applies the lid-close flag to the active sleep-prevention manager.
+    /// Persistence is owned by PreferencesView's `@AppStorage` binding, so
+    /// this VM doesn't write to UserDefaults itself.
     func setAllowLidClose(_ enabled: Bool) {
-        UserDefaults.standard.set(enabled, forKey: PreferenceKeys.allowLidClose)
         SleepPreventionManager.shared.updateAllowLidClose(enabled)
     }
 

@@ -89,6 +89,54 @@ final class SleepPreventionManagerTests: XCTestCase {
         XCTAssertTrue(fake.createCalls.allSatisfy { $0.timeout == 30 })
     }
 
+    func testSessionResignReleasesHeldAssertionsImmediately() {
+        // Without this behaviour, the kernel times the assertions out 30 s
+        // later and the manager's stored IDs drift out of sync with reality.
+        let fake = FakePowerAssertionBackend()
+        let manager = SleepPreventionManager(backend: fake)
+        manager.preventSleep(allowLidClose: true)
+        XCTAssertEqual(manager.heldAssertionCount, 3)
+
+        manager.handleSessionResignActive()
+
+        XCTAssertEqual(
+            manager.heldAssertionCount,
+            0,
+            "Resign-active must release immediately, not wait for the kernel timeout."
+        )
+        XCTAssertEqual(fake.releaseCalls.count, 3)
+        XCTAssertTrue(fake.liveAssertions.isEmpty)
+    }
+
+    func testSessionBecomeActiveReengagesIfActive() {
+        let fake = FakePowerAssertionBackend()
+        let manager = SleepPreventionManager(backend: fake)
+        manager.preventSleep(allowLidClose: true)
+        manager.handleSessionResignActive()
+        XCTAssertEqual(manager.heldAssertionCount, 0)
+
+        manager.handleSessionBecomeActive()
+
+        XCTAssertEqual(
+            manager.heldAssertionCount,
+            3,
+            "Become-active should re-engage immediately, not wait up to 10 s for the next timer tick."
+        )
+    }
+
+    func testSessionBecomeActiveDoesNothingIfNotActive() {
+        let fake = FakePowerAssertionBackend()
+        let manager = SleepPreventionManager(backend: fake)
+        manager.handleSessionResignActive()
+        manager.handleSessionBecomeActive()
+
+        XCTAssertEqual(
+            manager.heldAssertionCount,
+            0,
+            "Session events must not create assertions when the user hasn't activated Caffeine."
+        )
+    }
+
     func testManagerDeallocatesWhenOutOfScope() {
         // A selector-based NSWorkspace observer retains its target, which
         // would keep the manager alive forever and leak across tests. With

@@ -41,7 +41,7 @@
 "Welcome to Caffeine" = "欢迎使用 Caffeine";
 
 /* About credits */
-"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\n源代码：\nhttps://github.caffeine-app.net";
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\n源代码：\nhttps://github.com/bubbleee030/Caffeine";
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine 会阻止睡眠";

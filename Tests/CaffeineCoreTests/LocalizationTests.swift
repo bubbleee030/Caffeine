@@ -55,7 +55,7 @@ final class LocalizationTests: XCTestCase {
         // Menu additions
         "Activate for", "Welcome to Caffeine",
         // About credits
-        "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net",
+        "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n© 2026 @bubbleee030\n\nSource code:\nhttps://github.com/bubbleee030/Caffeine",
         // System messages
         "Caffeine prevents sleep",
     ]
@@ -102,12 +102,16 @@ final class LocalizationTests: XCTestCase {
         }
 
         XCTAssertEqual(hant.keys.sorted(), hans.keys.sorted(), "zh-Hant must cover the same keys as zh-Hans")
-        // The two scripts use different characters; a representative key must
-        // not be identical across them.
-        XCTAssertNotEqual(
-            hant["Quit"],
-            hans["Quit"],
-            "zh-Hant should use Traditional characters, not the Simplified value"
+
+        // Beyond key parity, the two scripts must differ for the bulk of the
+        // user-facing values. A single representative key isn't enough — it
+        // could happen to translate identically in both scripts. Require that
+        // at least half the values are non-identical across the two locales.
+        let differingValues = self.expectedKeys.filter { hant[$0] != hans[$0] }
+        let ratio = Double(differingValues.count) / Double(self.expectedKeys.count)
+        XCTAssertGreaterThan(
+            ratio, 0.5,
+            "Only \(differingValues.count)/\(self.expectedKeys.count) keys differ between zh-Hant and zh-Hans — one of the locales is probably a copy of the other."
         )
     }
 }

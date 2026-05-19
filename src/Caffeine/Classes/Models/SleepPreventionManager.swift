@@ -142,14 +142,33 @@ public final class SleepPreventionManager {
 
         nc.publisher(for: NSWorkspace.sessionDidResignActiveNotification)
             .sink { [weak self] _ in
-                Task { @MainActor [weak self] in self?.isUserSessionActive = false }
+                Task { @MainActor [weak self] in self?.handleSessionResignActive() }
             }
             .store(in: &self.sessionObservers)
 
         nc.publisher(for: NSWorkspace.sessionDidBecomeActiveNotification)
             .sink { [weak self] _ in
-                Task { @MainActor [weak self] in self?.isUserSessionActive = true }
+                Task { @MainActor [weak self] in self?.handleSessionBecomeActive() }
             }
             .store(in: &self.sessionObservers)
+    }
+
+    /// Internal (not private) so tests can drive these directly without
+    /// posting a real NSWorkspace notification and waiting for the Task
+    /// @MainActor hop. Not part of the public API.
+    func handleSessionResignActive() {
+        self.isUserSessionActive = false
+        // Release immediately so the manager's stored IDs match the kernel's
+        // view of the world (the kernel will time them out anyway after 30 s).
+        // Without this, `heldAssertionCount` lies during the inactive window
+        // and re-engagement on resume waits up to 10 s for the next timer fire.
+        self.releaseAll()
+    }
+
+    func handleSessionBecomeActive() {
+        self.isUserSessionActive = true
+        // Re-engage immediately on resume rather than waiting up to 10 s for
+        // the timer's next tick.
+        if self.isActive { self.refreshAssertions() }
     }
 }
