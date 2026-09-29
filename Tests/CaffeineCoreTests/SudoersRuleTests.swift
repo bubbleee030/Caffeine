@@ -67,3 +67,14 @@ final class SudoersRuleTests: XCTestCase {
         XCTAssertTrue(script.hasSuffix(#"with administrator privileges with prompt "Say \"hi\"""#))
     }
 }
+
+final class SleepSettingErrorTests: XCTestCase {
+    func testDescriptionIncludesStatusAndOutput() {
+        let error = SleepSettingError.commandFailed(status: 1, output: "sudo: a password is required\n")
+
+        XCTAssertEqual(
+            error.localizedDescription,
+            "Command failed with status 1: sudo: a password is required"
+        )
+    }
+}

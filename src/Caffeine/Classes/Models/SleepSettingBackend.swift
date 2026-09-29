@@ -5,8 +5,16 @@
 
 import Foundation
 
-public enum SleepSettingError: Error, Equatable {
+public enum SleepSettingError: LocalizedError, Equatable {
     case commandFailed(status: Int32, output: String)
+
+    /// Debug-log text only (DZErrorLog); never shown in the UI.
+    public var errorDescription: String? {
+        switch self {
+        case let .commandFailed(status, output):
+            "Command failed with status \(status): \(output.trimmingCharacters(in: .whitespacesAndNewlines))"
+        }
+    }
 }
 
 /// Abstraction over the system-wide `SleepDisabled` power setting
