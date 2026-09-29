@@ -94,13 +94,17 @@ private final class FakeLaunchItemBackend: LaunchItemBackend {
 
     func register() throws {
         self.registerCalls += 1
-        if let registerError { throw registerError }
+        if let registerError {
+            throw registerError
+        }
         self.isEnabled = true
     }
 
     func unregister() throws {
         self.unregisterCalls += 1
-        if let unregisterError { throw unregisterError }
+        if let unregisterError {
+            throw unregisterError
+        }
         self.isEnabled = false
     }
 }

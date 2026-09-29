@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- "Keep apps active" no longer moves the pointer to the wrong position on setups with multiple displays of different heights.
+- "Keep apps active" could keep simulating activity after Caffeine was deactivated if it was turned off immediately after being turned on.
+
 ## [1.7.0] - 2026-05-19
 
 ### Added

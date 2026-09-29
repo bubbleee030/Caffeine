@@ -33,20 +33,21 @@ cleanup() {
         kill "$APP_PID" 2>/dev/null || true
         wait "$APP_PID" 2>/dev/null || true
     fi
-    pkill -f "Caffeine.app/Contents/MacOS/Caffeine" 2>/dev/null || true
 }
 trap cleanup EXIT
 
 # Polls `pmset -g assertions` for up to ASSERTION_POLL_TIMEOUT seconds (default 30)
-# until at least one Caffeine-owned assertion appears, or fails. Returns the
-# matched output on stdout.
+# until at least one assertion owned by the process under test ($APP_PID)
+# appears, or fails. Returns the matched output on stdout. Filtering by PID
+# keeps an installed copy of Caffeine that happens to be running (e.g. launched
+# at login) from polluting the results.
 poll_for_caffeine_assertions() {
     local timeout="${ASSERTION_POLL_TIMEOUT:-30}"
     local interval=1
     local elapsed=0
     local out=""
     while ((elapsed < timeout)); do
-        out=$(pmset -g assertions | grep -E "\(Caffeine\)" || true)
+        out=$(pmset -g assertions | grep -E "pid ${APP_PID}\(Caffeine\)" || true)
         if [[ -n "$out" ]]; then
             printf '%s\n' "$out"
             return 0

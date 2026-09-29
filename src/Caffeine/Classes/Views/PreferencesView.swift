@@ -38,7 +38,7 @@ struct PreferencesView: View {
 
                     Text("Right-click (or ⌃-click) the menu bar icon to show the Caffeine menu.")
                         .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -98,7 +98,7 @@ struct PreferencesView: View {
 
                 Text("Works on AC power. On battery, macOS may still sleep when the lid is closed.")
                     .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .padding(.leading, 20)
 
                 Divider()
@@ -115,7 +115,7 @@ struct PreferencesView: View {
 
                 Text("Prevents apps from becoming inactive and the screen saver from starting.")
                     .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .padding(.leading, 20)
             }
 

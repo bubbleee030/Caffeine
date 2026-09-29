@@ -16,7 +16,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegat
         updaterDelegate: nil,
         userDriverDelegate: self
     )
-    private var statusItem: NSStatusItem?
     private var menuBarController: MenuBarController?
 
     func applicationDidFinishLaunching(_: Notification) {
@@ -32,9 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUStandardUserDriverDelegat
         self.menuBarController?.cleanup()
     }
 
-    // MARK: SPUStandardUserDriverDelegate
-
-    // MARK: - --
+    // MARK: - SPUStandardUserDriverDelegate
 
     func supportsGentleScheduledUpdateReminders() -> Bool {
         true

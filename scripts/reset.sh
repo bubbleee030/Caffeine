@@ -1,16 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
-# Resets Caffeine app to fresh install state
-# Wrapper for the generic reset-app script
+# Resets Caffeine to a fresh-install state for development: quits the app and
+# removes its preferences, sandbox container and privacy (TCC) grants.
+# The "Launch at Login" item can't be removed from a script — toggle it off in
+# the app first, or remove it in System Settings > General > Login Items.
 #
+
+set -uo pipefail
 
 BUNDLE_ID="net.domzilla.caffeine"
-RESET_APP=~/GIT/Projects/Misc/scripts/development/macos/reset-app
 
-if [[ -x "$RESET_APP" ]]; then
-    exec "$RESET_APP" "$@" "$BUNDLE_ID"
-else
-    echo "Error: reset-app script not found at $RESET_APP"
-    echo "Please ensure the script exists and is executable."
-    exit 1
-fi
+echo "==> Quitting Caffeine"
+osascript -e "tell application id \"$BUNDLE_ID\" to quit" 2>/dev/null || true
+pkill -x Caffeine 2>/dev/null || true
+
+echo "==> Removing preferences"
+defaults delete "$BUNDLE_ID" 2>/dev/null || true
+rm -rf "$HOME/Library/Containers/$BUNDLE_ID"
+
+echo "==> Resetting privacy permissions"
+tccutil reset All "$BUNDLE_ID" >/dev/null 2>&1 || true
+
+echo "==> Done"

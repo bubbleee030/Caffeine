@@ -21,24 +21,20 @@ final class ActivitySimulator {
 
     private init() {}
 
-    deinit {
-        stopMonitoring()
-    }
-
     // MARK: - Public Methods
 
-    /// Starts monitoring system idle time and simulating activity when needed
+    /// Starts monitoring system idle time and simulating activity when needed.
+    /// The timer is scheduled synchronously so a `stopMonitoring()` issued right
+    /// after this call always invalidates it (an async hop here used to let the
+    /// timer be created *after* the stop, leaving simulation running).
     func startMonitoring() {
         self.stopMonitoring()
 
-        // Ensure timer is scheduled on main run loop
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-
-            self.checkTimer = Timer.scheduledTimer(
-                withTimeInterval: self.checkInterval,
-                repeats: true
-            ) { [weak self] _ in
+        self.checkTimer = Timer.scheduledTimer(
+            withTimeInterval: self.checkInterval,
+            repeats: true
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
                 self?.checkAndSimulateIfNeeded()
             }
         }
@@ -95,12 +91,11 @@ final class ActivitySimulator {
     }
 
     private func simulateActivity() {
-        // Get current mouse position
-        let currentPos = NSEvent.mouseLocation
-
-        // Convert from bottom-left origin (NSEvent) to top-left origin (CGEvent)
-        guard let screenHeight = NSScreen.main?.frame.height else { return }
-        let cgPoint = CGPoint(x: currentPos.x, y: screenHeight - currentPos.y)
+        // Read the cursor position in CoreGraphics global coordinates (top-left
+        // origin of the primary display). Flipping NSEvent.mouseLocation with
+        // NSScreen.main's height was wrong on multi-display setups, because
+        // NSScreen.main is the focused screen, not the primary one.
+        guard let cgPoint = CGEvent(source: nil)?.location else { return }
 
         // CGEvent generates actual HID events that reset the system idle timer
         // CGWarpMouseCursorPosition does NOT reset HIDIdleTime as it bypasses HID

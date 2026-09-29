@@ -3,11 +3,11 @@
 //  Caffeine
 //
 
+#if canImport(DZFoundation)
+import DZFoundation
+#endif
 import Foundation
 import Observation
-import os
-
-private let logger = Logger(subsystem: "net.domzilla.caffeine", category: "LaunchAtLoginManager")
 
 /// Source of truth for the "Launch at Login" preference. The published
 /// `isEnabled` value mirrors the underlying ``LaunchItemBackend``; user-driven
@@ -26,8 +26,11 @@ public final class LaunchAtLoginManager {
 
     private let backend: any LaunchItemBackend
 
-    public init(backend: any LaunchItemBackend = SMAppServiceBackend.shared) {
-        self.backend = backend
+    /// Pass `nil` (the default) to use ``SMAppServiceBackend/shared``. See
+    /// `SleepPreventionManager.init(backend:)` for why this isn't a default
+    /// argument.
+    public init(backend: (any LaunchItemBackend)? = nil) {
+        self.backend = backend ?? SMAppServiceBackend.shared
         self.refresh()
     }
 
@@ -39,8 +42,8 @@ public final class LaunchAtLoginManager {
     /// Attempts to enable or disable the login item.
     /// - Returns: `true` if the backend call succeeded; `false` if it threw.
     ///
-    /// On failure, the error is logged via `os.Logger` (visible in Console.app
-    /// under subsystem `net.domzilla.caffeine`) and surfaced on ``lastError``
+    /// On failure, the error is logged via `DZErrorLog` (debug builds only) and
+    /// surfaced on ``lastError``
     /// so callers can present it to the user. ``refresh()`` is always called
     /// afterwards so the published `isEnabled` reflects the backend's truth —
     /// for a SwiftUI `Toggle` this means a failed register snaps the toggle
@@ -57,9 +60,9 @@ public final class LaunchAtLoginManager {
             self.refresh()
             return true
         } catch {
-            logger.error(
-                "Failed to \(enabled ? "register" : "unregister", privacy: .public) login item: \(error.localizedDescription, privacy: .public)"
-            )
+            #if canImport(DZFoundation)
+            DZErrorLog(error)
+            #endif
             self.lastError = error
             self.refresh()
             return false
