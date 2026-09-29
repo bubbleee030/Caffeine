@@ -32,6 +32,9 @@ class MenuBarController: NSObject {
 
     func cleanup() {
         self.viewModel.deactivate()
+        // deactivate() only queues an async restore, which never runs during
+        // termination — restore closed-lid mode synchronously here.
+        LidSleepController.shared.restoreImmediately()
         if let statusItem {
             NSStatusBar.system.removeStatusItem(statusItem)
         }
@@ -95,6 +98,15 @@ class MenuBarController: NSObject {
             let infoItem = NSMenuItem(title: timeString, action: nil, keyEquivalent: "")
             infoItem.isEnabled = false
             menu.addItem(infoItem)
+            if LidSleepController.shared.state == .on {
+                let lidItem = NSMenuItem(
+                    title: String(localized: "Closed-lid mode is on"),
+                    action: nil,
+                    keyEquivalent: ""
+                )
+                lidItem.isEnabled = false
+                menu.addItem(lidItem)
+            }
             menu.addItem(NSMenuItem.separator())
         }
 

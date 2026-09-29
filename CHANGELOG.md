@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- "Allow Mac to run with lid closed" now also works on battery. Each time Caffeine activates with it on, confirm with Touch ID (or your password). The first time, Caffeine asks for your administrator password once to install a rule that only allows turning lid-close sleep on and off.
+- "Restore sleep on battery below" setting (10–50 %, default 20 %): on battery, closed-lid mode turns itself off at that level, and a Mac with the lid already closed goes to sleep.
+- Normal sleep is restored when Caffeine is deactivated, quits, is killed with `kill`/`killall`, or — after a crash — the next time it starts.
+- The Caffeine menu shows "Closed-lid mode is on" while it is active.
+
 ### Changed
 
 - The bundle identifier is now `io.github.bubbleee030.caffeine`, so this fork no longer shares settings with the original Caffeine. Preferences, "Launch at Login" and the Accessibility permission for "Keep apps active" need to be set up again once.

@@ -5,6 +5,7 @@
 //  Created by Dominic Rodemer on 11.11.25.
 //
 
+import AppKit
 import ApplicationServices
 import Combine
 import SwiftUI
@@ -23,6 +24,7 @@ class CaffeineViewModel: ObservableObject {
     private var timeoutTimer: Timer?
     private var displayTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
+    private let lidSleep = LidSleepController.shared
 
     // MARK: - Initialization
 
@@ -33,6 +35,11 @@ class CaffeineViewModel: ObservableObject {
 
         self.setupObservers()
 
+        self.lidSleep.confirmSetup = { Self.confirmLidSleepSetup() }
+        // Restore sleep if a previous run crashed with closed-lid mode on.
+        // Queued before any activation below, so it always runs first.
+        self.lidSleep.requestRecovery()
+
         #if DEBUG
         // Test hook: integration script sets CA_TEST_AUTOACTIVATE=lid-closed
         // (or any other value) to force activation on launch with a known
@@ -42,7 +49,7 @@ class CaffeineViewModel: ObservableObject {
         // headless integration run — add future init above this guard, not
         // below it. Compiled out in Release.
         if let mode = ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] {
-            self.activate(allowLidCloseOverride: mode == "lid-closed")
+            self.activate(allowLidCloseOverride: mode == "lid-closed" || mode == "lid-battery")
             return
         }
         #endif
@@ -130,6 +137,9 @@ class CaffeineViewModel: ObservableObject {
         let allowLidClose = allowLidCloseOverride
             ?? UserDefaults.standard.bool(forKey: PreferenceKeys.allowLidClose)
         SleepPreventionManager.shared.preventSleep(allowLidClose: allowLidClose)
+        if allowLidClose, self.shouldEngageLidSleep {
+            self.lidSleep.requestEngage()
+        }
 
         if UserDefaults.standard.bool(forKey: PreferenceKeys.keepAppsActive) {
             ActivitySimulator.shared.startMonitoring()
@@ -141,6 +151,11 @@ class CaffeineViewModel: ObservableObject {
     /// this VM doesn't write to UserDefaults itself.
     func setAllowLidClose(_ enabled: Bool) {
         SleepPreventionManager.shared.updateAllowLidClose(enabled)
+        if !enabled {
+            self.lidSleep.requestRestore()
+        } else if self.isActive, self.shouldEngageLidSleep {
+            self.lidSleep.requestEngage()
+        }
     }
 
     /// Deactivates Caffeine
@@ -149,6 +164,7 @@ class CaffeineViewModel: ObservableObject {
         self.timeRemaining = nil
         self.isActive = false
         SleepPreventionManager.shared.allowSleep()
+        self.lidSleep.requestRestore()
         ActivitySimulator.shared.stopMonitoring()
     }
 
@@ -198,6 +214,30 @@ class CaffeineViewModel: ObservableObject {
 
     // MARK: - Private Methods
 
+    /// Integration runs other than `lid-battery` must never trigger the
+    /// administrator or Touch ID prompts.
+    private var shouldEngageLidSleep: Bool {
+        #if DEBUG
+        if let mode = ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] {
+            return mode == "lid-battery"
+        }
+        #endif
+        return true
+    }
+
+    /// Explains the one-time administrator prompt before it appears.
+    private static func confirmLidSleepSetup() -> Bool {
+        NSApp.activate()
+        let alert = NSAlert()
+        alert.messageText = String(localized: "Allow closed-lid mode on battery?")
+        alert.informativeText = String(
+            localized: "Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid"
+        )
+        alert.addButton(withTitle: String(localized: "Continue"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
+        return alert.runModal() == .alertFirstButtonReturn
+    }
+
     private func setupObservers() {
         // Observe workspace sleep notification
         NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.willSleepNotification)
@@ -241,4 +281,5 @@ enum PreferenceKeys {
     static let deactivateOnManualSleep = "CADeactivateOnManualSleep"
     static let keepAppsActive = "CAKeepAppsActive"
     static let allowLidClose = "CAAllowLidClose"
+    static let lidSleepBatteryThreshold = LidSleepController.batteryThresholdKey
 }

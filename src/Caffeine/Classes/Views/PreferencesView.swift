@@ -10,12 +10,15 @@ import SwiftUI
 struct PreferencesView: View {
     @ObservedObject var viewModel: CaffeineViewModel
     @State private var loginManager = LaunchAtLoginManager.shared
+    @State private var lidSleep = LidSleepController.shared
     @AppStorage(PreferenceKeys.defaultDuration) private var defaultDuration = 0
     @AppStorage(PreferenceKeys.activateAtLaunch) private var activateAtLaunch = false
     @AppStorage(PreferenceKeys.suppressLaunchMessage) private var suppressLaunchMessage = false
     @AppStorage(PreferenceKeys.deactivateOnManualSleep) private var deactivateOnManualSleep = false
     @AppStorage(PreferenceKeys.keepAppsActive) private var keepAppsActive = false
     @AppStorage(PreferenceKeys.allowLidClose) private var allowLidClose = false
+    @AppStorage(PreferenceKeys.lidSleepBatteryThreshold)
+    private var lidSleepBatteryThreshold = LidSleepController.defaultBatteryThreshold
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -96,10 +99,38 @@ struct PreferencesView: View {
                 ))
                 .font(.system(size: 13))
 
-                Text("Works on AC power. On battery, macOS may still sleep when the lid is closed.")
+                Text("Works on battery too. Requires Touch ID or your password each time Caffeine activates.")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                     .padding(.leading, 20)
+
+                HStack(spacing: 8) {
+                    Text("Restore sleep on battery below:")
+                        .font(.system(size: 13))
+
+                    Picker("", selection: self.$lidSleepBatteryThreshold) {
+                        ForEach([10, 20, 30, 50], id: \.self) { percent in
+                            Text(Double(percent) / 100, format: .percent).tag(percent)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 90)
+
+                    Spacer()
+                }
+                .padding(.leading, 20)
+                .disabled(!self.allowLidClose)
+
+                if let failure = self.lidSleep.lastFailure {
+                    Text(
+                        failure == .lowBattery
+                            ? LocalizedStringKey("Closed-lid mode was turned off because the battery is low.")
+                            : LocalizedStringKey("Closed-lid mode on battery wasn't enabled.")
+                    )
+                    .font(.system(size: 11))
+                    .foregroundStyle(.red)
+                    .padding(.leading, 20)
+                }
 
                 Divider()
                     .padding(.vertical, 4)
