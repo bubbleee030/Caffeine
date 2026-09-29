@@ -25,7 +25,10 @@ let package = Package(
                 "LaunchAtLoginManager.swift",
                 "LaunchItemBackend.swift",
                 "PowerAssertionBackend.swift",
+                "ProcessRunner.swift",
+                "RootDomain.swift",
                 "SleepPreventionManager.swift",
+                "SudoersRule.swift",
             ]
         ),
         .testTarget(
