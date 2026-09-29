@@ -65,6 +65,34 @@ swiftformat .
   explicitly and don't reference main-actor `shared` singletons from default arguments.
 - `LocalizationTests` fails if any locale is missing a key — add new keys to its `expectedKeys` list.
 
+## Releasing (Sparkle updates)
+Updates are served from `appcast.xml` on `master`
+(`SUFeedURL = https://raw.githubusercontent.com/bubbleee030/Caffeine/master/appcast.xml`). Each update is signed with
+the EdDSA private key stored in the maintainer's login Keychain (created with Sparkle's `generate_keys`); its public
+half is `SUPublicEDKey` in `Info.plist`. **Never regenerate or lose the private key** — installed copies would reject
+every future update.
+
+Sparkle's tools live in `~/Library/Developer/Xcode/DerivedData/Caffeine-*/SourcePackages/artifacts/sparkle/Sparkle/bin/`.
+
+1. Bump `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in Xcode, move the `[Unreleased]` changelog entries under the new
+   version, commit.
+2. Xcode → Product → Archive → Distribute App → Direct Distribution (Developer ID, notarized) → export `Caffeine.app`.
+3. Zip it and generate the signed appcast entry:
+   ```bash
+   VERSION=1.8.0
+   SPARKLE_BIN=$(echo ~/Library/Developer/Xcode/DerivedData/Caffeine-*/SourcePackages/artifacts/sparkle/Sparkle/bin)
+   mkdir -p build/updates && cp appcast.xml build/updates/
+   ditto -c -k --keepParent /path/to/exported/Caffeine.app "build/updates/Caffeine-$VERSION.zip"
+   "$SPARKLE_BIN/generate_appcast" \
+       --download-url-prefix "https://github.com/bubbleee030/Caffeine/releases/download/v$VERSION/" \
+       build/updates
+   ```
+4. Publish the release, then the feed (the feed must only point at assets that already exist):
+   ```bash
+   gh release create "v$VERSION" "build/updates/Caffeine-$VERSION.zip" --title "Caffeine $VERSION" --notes-file <notes>
+   cp build/updates/appcast.xml appcast.xml && git commit -am "Update appcast for $VERSION" && git push
+   ```
+
 ## Changelog (MANDATORY)
 All important user-facing changes (fixes, additions, removals, changes) must be recorded under `## [Unreleased]` in
 `CHANGELOG.md`. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning:

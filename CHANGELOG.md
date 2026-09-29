@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- "Check for Updates…" now checks this fork's own update feed. Previously it checked the original Caffeine's feed and could replace this fork with the original app.
 - "Keep apps active" no longer moves the pointer to the wrong position on setups with multiple displays of different heights.
 - "Keep apps active" could keep simulating activity after Caffeine was deactivated if it was turned off immediately after being turned on.
 
