@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The bundle identifier is now `io.github.bubbleee030.caffeine`, so this fork no longer shares settings with the original Caffeine. Preferences, "Launch at Login" and the Accessibility permission for "Keep apps active" need to be set up again once.
+- Caffeine is no longer sandboxed, so it can turn off lid-close sleep on battery (see "Allow Mac to run with lid closed"). Previous settings are not carried over.
 
 ### Fixed
 
