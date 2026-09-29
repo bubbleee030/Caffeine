@@ -201,7 +201,7 @@ exist (rule not installed).
 
 ## Milestones
 
-1. **M1 — Update feed**: Info.plist feed/key, `appcast.xml`, release docs. *Blocked on the user's public key.*
+1. **M1 — Update feed**: ✅ done on `fix/macos27-review` (`2f393f2`), together with the bundle-ID change (`c84afa9`).
 2. **M2 — Remove sandbox**: entitlements + Info.plist; build + existing tests + integration green.
 3. **M3 — Lid sleep core**: protocols, production backends, `LidSleepController`, unit tests, add files to `Package.swift`.
 4. **M4 — Wire-up + UI + localization**: view model, termination, preferences, menu, 14 locales.
