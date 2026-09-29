@@ -35,8 +35,12 @@ public final class SleepPreventionManager {
     private var isActive = false
     private var sessionObservers = Set<AnyCancellable>()
 
-    public init(backend: any PowerAssertionBackend = IOKitPowerAssertionBackend.shared) {
-        self.backend = backend
+    /// Pass `nil` (the default) to use ``IOKitPowerAssertionBackend/shared``.
+    /// The default is resolved inside the initializer rather than as a default
+    /// argument, because default arguments are evaluated in a nonisolated
+    /// context and can't reference a main-actor-isolated `shared`.
+    public init(backend: (any PowerAssertionBackend)? = nil) {
+        self.backend = backend ?? IOKitPowerAssertionBackend.shared
         self.setupWorkspaceNotifications()
     }
 
@@ -64,7 +68,9 @@ public final class SleepPreventionManager {
     public func updateAllowLidClose(_ value: Bool) {
         guard self.allowLidClose != value else { return }
         self.allowLidClose = value
-        if self.isActive { self.refreshAssertions() }
+        if self.isActive {
+            self.refreshAssertions()
+        }
     }
 
     /// Allows the system to sleep normally and releases every held assertion.
@@ -119,15 +125,27 @@ public final class SleepPreventionManager {
         self.idleSystemAssertionID = newIdleSystem
         self.preventSystemAssertionID = newPreventSystem
 
-        if let id = oldIdleDisplay { self.backend.release(id) }
-        if let id = oldIdleSystem { self.backend.release(id) }
-        if let id = oldPreventSystem { self.backend.release(id) }
+        if let id = oldIdleDisplay {
+            self.backend.release(id)
+        }
+        if let id = oldIdleSystem {
+            self.backend.release(id)
+        }
+        if let id = oldPreventSystem {
+            self.backend.release(id)
+        }
     }
 
     private func releaseAll() {
-        if let id = idleDisplayAssertionID { self.backend.release(id) }
-        if let id = idleSystemAssertionID { self.backend.release(id) }
-        if let id = preventSystemAssertionID { self.backend.release(id) }
+        if let id = idleDisplayAssertionID {
+            self.backend.release(id)
+        }
+        if let id = idleSystemAssertionID {
+            self.backend.release(id)
+        }
+        if let id = preventSystemAssertionID {
+            self.backend.release(id)
+        }
         self.idleDisplayAssertionID = nil
         self.idleSystemAssertionID = nil
         self.preventSystemAssertionID = nil
@@ -169,6 +187,8 @@ public final class SleepPreventionManager {
         self.isUserSessionActive = true
         // Re-engage immediately on resume rather than waiting up to 10 s for
         // the timer's next tick.
-        if self.isActive { self.refreshAssertions() }
+        if self.isActive {
+            self.refreshAssertions()
+        }
     }
 }

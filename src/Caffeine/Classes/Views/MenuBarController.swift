@@ -198,7 +198,7 @@ class MenuBarController: NSObject {
     }
 
     private func showPreferencesWindow() {
-        NSApp.activate(ignoringOtherApps: true)
+        NSApp.activate()
 
         if self.preferencesWindow == nil {
             let contentView = PreferencesView(viewModel: viewModel)
@@ -218,7 +218,7 @@ class MenuBarController: NSObject {
 
     @objc
     private func showAbout(_: Any?) {
-        NSApp.activate(ignoringOtherApps: true)
+        NSApp.activate()
 
         let credits =
             String(
