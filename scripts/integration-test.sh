@@ -28,10 +28,33 @@ if [[ ! -x "$BINARY" ]]; then
 fi
 
 APP_PID=""
+RULE=/etc/sudoers.d/caffeine-lid
+LID_TEST_TOUCHED_SLEEP=0
+
+# Prints "Yes" or "No": the SleepDisabled (pmset disablesleep) setting.
+sleep_disabled_value() {
+    ioreg -rn IOPMrootDomain -d 1 | awk -F'= ' '/"SleepDisabled"/ { print $2; exit }'
+}
+
+# Waits up to 30 s for SleepDisabled to equal $1 ("Yes"/"No").
+wait_for_sleep_disabled() {
+    local want="$1" elapsed=0
+    while ((elapsed < 30)); do
+        [[ "$(sleep_disabled_value)" == "$want" ]] && return 0
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    return 1
+}
+
 cleanup() {
     if [[ -n "$APP_PID" ]]; then
         kill "$APP_PID" 2>/dev/null || true
         wait "$APP_PID" 2>/dev/null || true
+    fi
+    # Never leave the Mac unable to sleep because a check failed midway.
+    if [[ "$LID_TEST_TOUCHED_SLEEP" == 1 && "$(sleep_disabled_value)" == "Yes" ]]; then
+        sudo -n /usr/bin/pmset disablesleep 0 || echo "WARN: run 'sudo pmset disablesleep 0' manually"
     fi
 }
 trap cleanup EXIT
@@ -99,5 +122,45 @@ run_case() {
 
 run_case "lid-closed" "PreventUserIdleDisplaySleep PreventUserIdleSystemSleep PreventSystemSleep"
 run_case "lid-open"   "PreventUserIdleDisplaySleep PreventUserIdleSystemSleep" "PreventSystemSleep"
+
+run_lid_battery_cases() {
+    if [[ ! -e "$RULE" ]]; then
+        echo "==> SKIP lid-battery cases: $RULE not installed (enable closed-lid mode once in the app)"
+        return 0
+    fi
+    if [[ "$(sleep_disabled_value)" == "Yes" ]]; then
+        echo "==> SKIP lid-battery cases: SleepDisabled is already on (set by something else)"
+        return 0
+    fi
+    LID_TEST_TOUCHED_SLEEP=1
+
+    echo "==> Case: CA_TEST_AUTOACTIVATE=lid-battery (quit restores sleep)"
+    CA_TEST_AUTOACTIVATE=lid-battery "$BINARY" &
+    APP_PID=$!
+    wait_for_sleep_disabled Yes || { echo "FAIL: SleepDisabled never turned on"; return 1; }
+    echo "    ok: SleepDisabled on while active"
+    kill "$APP_PID"
+    wait "$APP_PID" 2>/dev/null || true
+    APP_PID=""
+    wait_for_sleep_disabled No || { echo "FAIL: SleepDisabled still on after SIGTERM"; return 1; }
+    echo "    ok: SleepDisabled restored on termination"
+
+    echo "==> Case: crash recovery (kill -9, relaunch restores sleep)"
+    CA_TEST_AUTOACTIVATE=lid-battery "$BINARY" &
+    APP_PID=$!
+    wait_for_sleep_disabled Yes || { echo "FAIL: SleepDisabled never turned on"; return 1; }
+    kill -9 "$APP_PID"
+    wait "$APP_PID" 2>/dev/null || true
+    APP_PID=""
+    [[ "$(sleep_disabled_value)" == "Yes" ]] || { echo "FAIL: expected SleepDisabled to survive a crash"; return 1; }
+    CA_TEST_AUTOACTIVATE=lid-open "$BINARY" &
+    APP_PID=$!
+    wait_for_sleep_disabled No || { echo "FAIL: relaunch did not restore SleepDisabled"; return 1; }
+    echo "    ok: relaunch restored SleepDisabled after crash"
+    kill "$APP_PID"
+    wait "$APP_PID" 2>/dev/null || true
+    APP_PID=""
+}
+run_lid_battery_cases
 
 echo "==> Integration checks passed"

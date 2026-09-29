@@ -15,6 +15,8 @@ login items and privacy permissions.
   - [Sparkle](https://github.com/sparkle-project/Sparkle) — updates
   - [DZFoundation](https://github.com/domzilla/DZFoundation) — debug logging
 - **Minimum Deployment**: macOS 14.6
+- **Not sandboxed** (Hardened Runtime only): closed-lid mode on battery runs `sudo -n /usr/bin/pmset disablesleep 0|1`
+  through the sudoers rule `/etc/sudoers.d/caffeine-lid` (see `LidSleepController`)
 - **Project**: `src/Caffeine.xcodeproj`
 
 ## Repository Layout
@@ -64,6 +66,9 @@ swiftformat .
 - Model files shared with the package must not assume the app's default MainActor isolation: mark types `@MainActor`
   explicitly and don't reference main-actor `shared` singletons from default arguments.
 - `LocalizationTests` fails if any locale is missing a key — add new keys to its `expectedKeys` list.
+- `scripts/integration-test.sh` exercises closed-lid mode on battery (including crash recovery) only when
+  `/etc/sudoers.d/caffeine-lid` exists; otherwise those cases are skipped. The DEBUG-only
+  `CA_TEST_AUTOACTIVATE=lid-battery` hook auto-approves the Touch ID step.
 
 ## Releasing (Sparkle updates)
 Updates are served from `appcast.xml` on `master`

@@ -6,7 +6,7 @@
 
 [English](README.md) • [繁體中文](README.zh-Hant.md)
 
-Caffeine is a small menu-bar utility that prevents your Mac from going to sleep, dimming the display, or starting the screensaver. This fork of [`domzilla/Caffeine`](https://github.com/domzilla/Caffeine) adds an **"Allow Mac to run with lid closed"** option (Amphetamine-parity on AC power) and a **"Launch at Login"** toggle, plus Traditional Chinese localization.
+Caffeine is a small menu-bar utility that prevents your Mac from going to sleep, dimming the display, or starting the screensaver. This fork of [`domzilla/Caffeine`](https://github.com/domzilla/Caffeine) adds an **"Allow Mac to run with lid closed"** option that works on AC power and on battery and a **"Launch at Login"** toggle, plus Traditional Chinese localization.
 
 ---
 
@@ -23,8 +23,8 @@ Caffeine is a small menu-bar utility that prevents your Mac from going to sleep,
 | --- | --- |
 | **Toggle** | Click the menu-bar cup. A full cup = active. An empty cup = your Mac sleeps normally. |
 | **Timed activation** | Right-click → *Activate for* → pick 5 min ‥ 5 hours, or *Indefinitely*. |
-| **Launch at Login** *(new)* | Preferences → *Launch at Login*. Uses `SMAppService`, sandbox-safe, no helper. |
-| **Allow Mac to run with lid closed** *(new)* | Preferences → *Allow Mac to run with lid closed*. Holds an additional `PreventSystemSleep` IOPMAssertion so a portable Mac stays running with the lid closed **on AC power**. On battery, macOS may still sleep — this is enforced by the system. |
+| **Launch at Login** *(new)* | Preferences → *Launch at Login*. Uses `SMAppService`, no helper. |
+| **Allow Mac to run with lid closed** *(new)* | Preferences → *Allow Mac to run with lid closed*. Keeps a portable Mac running with the lid closed — on AC power **and on battery**. Confirm with Touch ID each time Caffeine activates; sleep is restored automatically. |
 | **Keep apps active** | Simulates HID activity so apps like Teams or Slack stop marking you as "Away". |
 | **Deactivate on manual sleep** | Stops Caffeine when you put your Mac to sleep via the Apple menu. |
 
@@ -36,25 +36,33 @@ Open Preferences (right-click cup → *Preferences…*) and switch on **Launch a
 
 ### Allow Mac to run with lid closed
 
-Switch on **Allow Mac to run with lid closed**, then activate Caffeine (click the cup). On AC power, you can now close the lid and the Mac will keep running — useful for downloads, long renders, or streaming to an external display while the laptop is shut.
+Switch on **Allow Mac to run with lid closed**, then activate Caffeine (click the cup). You can now close the lid and the Mac keeps running — on AC power or on battery. Useful for downloads, long renders, or streaming to an external display while the laptop is shut.
 
-To verify it's working, in Terminal:
+**First time:** Caffeine explains what it's about to do, then macOS asks for your administrator password **once**. Caffeine installs `/etc/sudoers.d/caffeine-lid`, a rule that only lets it run `pmset disablesleep 0` and `pmset disablesleep 1` — nothing else.
+
+**Every activation:** confirm with Touch ID (or your password). If you cancel, Caffeine still activates, and lid-closed operation works on AC power only.
+
+**Sleep is always restored** when you deactivate Caffeine, when its timer ends, when you quit it (including `killall Caffeine`), and — if it crashed — the next time it starts. On battery, it also turns off at the level set in **Restore sleep on battery below** (default 20 %); if the lid is already closed, the Mac then goes to sleep.
+
+> ⚠️ While closed-lid mode is on, the Mac won't sleep at all — don't leave it running in a bag.
+
+To check the setting in Terminal (`Yes` while closed-lid mode is on):
 
 ```bash
-pmset -g assertions | grep -i caffeine
+ioreg -rn IOPMrootDomain -d 1 | grep '"SleepDisabled"'
 ```
 
-You should see all three assertion types while active with the toggle on:
+To remove the rule (Caffeine will ask again next time you use the feature):
 
-```
-pid 12345(Caffeine): … PreventUserIdleDisplaySleep …
-pid 12345(Caffeine): … PreventUserIdleSystemSleep …
-pid 12345(Caffeine): … PreventSystemSleep …
+```bash
+sudo rm /etc/sudoers.d/caffeine-lid
 ```
 
-If you turn the lid-close toggle off, the third line disappears.
+If sleep ever stays disabled (e.g. Caffeine was deleted while closed-lid mode was on):
 
-> ⚠️ macOS's closed-lid sleep policy is enforced by the kernel. On battery, the system may still sleep when the lid closes regardless of any assertion. Connect to power for reliable lid-closed operation.
+```bash
+sudo pmset disablesleep 0
+```
 
 ## Languages
 
