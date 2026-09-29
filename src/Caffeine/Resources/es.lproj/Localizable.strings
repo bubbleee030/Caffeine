@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Evita que las apps se vuelvan inactivas y que se inicie el salvapantallas.";
 "Launch at Login" = "Iniciar al iniciar sesión";
 "Allow Mac to run with lid closed" = "Permitir que el Mac funcione con la tapa cerrada";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Solo funciona con corriente eléctrica. Con batería, macOS puede dormir cuando se cierra la tapa.";
 "Close" = "Cerrar";
 
 /* Menu additions */
@@ -46,3 +45,16 @@
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine impide el reposo";
 
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "También funciona con batería. Requiere Touch ID o tu contraseña cada vez que se activa Caffeine.";
+"Restore sleep on battery below:" = "Restaurar el reposo con batería por debajo de:";
+"Closed-lid mode is on" = "El modo con tapa cerrada está activado";
+"Closed-lid mode on battery wasn't enabled." = "No se ha activado el modo con tapa cerrada con batería.";
+"Closed-lid mode was turned off because the battery is low." = "El modo con tapa cerrada se ha desactivado porque queda poca batería.";
+"Allow closed-lid mode on battery?" = "¿Permitir el modo con tapa cerrada con batería?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine te pedirá una sola vez tu contraseña de administrador para instalar una regla que solo le permite activar y desactivar el reposo al cerrar la tapa. Puedes eliminar la regla en cualquier momento desde Terminal con:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Continuar";
+"Cancel" = "Cancelar";
+"enable closed-lid mode" = "activar el modo con tapa cerrada";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine necesita tu contraseña de administrador una sola vez para permitir el modo con tapa cerrada con batería.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine no ha podido volver a activar el reposo. Para solucionarlo, ejecuta en Terminal:\nsudo pmset disablesleep 0";

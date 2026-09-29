@@ -6,7 +6,7 @@
 
 [English](README.md) • [繁體中文](README.zh-Hant.md)
 
-Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、暗螢幕或啟動螢幕保護程式。本 fork（基於 [`domzilla/Caffeine`](https://github.com/domzilla/Caffeine)）新增了 **「闔蓋時保持運作」**（在接通電源時可達到 Amphetamine 等價效果）與 **「登入時啟動」** 開關，並補上繁體中文在地化。
+Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、暗螢幕或啟動螢幕保護程式。本 fork（基於 [`domzilla/Caffeine`](https://github.com/domzilla/Caffeine)）新增了 **「闔蓋時保持運作」**（接通電源或使用電池時都有效）與 **「登入時啟動」** 開關，並補上繁體中文在地化。
 
 ---
 
@@ -24,7 +24,7 @@ Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、暗
 | **切換啟用** | 點按選單列的咖啡杯。滿杯＝啟用中，空杯＝Mac 正常睡眠。 |
 | **計時啟用** | 右鍵選單 → *啟用時長* → 選擇 5 分鐘 ‥ 5 小時，或 *無限期*。 |
 | **登入時啟動** *(新)* | 偏好設定 → *登入時啟動*。使用 `SMAppService`，App Sandbox 友善，不需 helper bundle。 |
-| **闔蓋時保持運作** *(新)* | 偏好設定 → *闔蓋時保持運作*。額外建立 `PreventSystemSleep` 的 IOPMAssertion，讓筆電在 **接通電源** 時闔上蓋子也保持運作。電池模式下，macOS 仍會強制睡眠 — 這是系統層面決定的。 |
+| **闔蓋時保持運作** *(新)* | 偏好設定 → *闔蓋時保持運作*。讓筆電闔上蓋子後繼續運作 — **接通電源或使用電池都可以**。每次啟用 Caffeine 時用 Touch ID 確認，睡眠設定會自動還原。 |
 | **保持 App 活躍** | 模擬 HID 活動，避免 Teams、Slack 等把你標為「離開」。 |
 | **手動睡眠時停用** | 從 Apple 選單手動進入睡眠時停止 Caffeine。 |
 
@@ -36,25 +36,33 @@ Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、暗
 
 ### 闔蓋時保持運作
 
-開啟 **闔蓋時保持運作**，然後啟用 Caffeine（點杯子）。接通電源時，你可以闔上蓋子，Mac 會繼續執行 — 適合下載中、長時間轉檔，或把筆電當主機接外接螢幕時闔起來放著。
+開啟 **闔蓋時保持運作**，然後啟用 Caffeine（點杯子）。之後你可以闔上蓋子，Mac 會繼續執行 — 接通電源或使用電池都行。適合下載中、長時間轉檔，或把筆電當主機接外接螢幕時闔起來放著。
 
-要確認有沒有真的生效，可以在 Terminal 執行：
+**第一次使用：** Caffeine 會先說明接下來的動作，然後 macOS 會要求輸入**一次**管理者密碼。Caffeine 會安裝 `/etc/sudoers.d/caffeine-lid`，這條規則只允許它執行 `pmset disablesleep 0` 和 `pmset disablesleep 1`，其他一概不行。
+
+**每次啟用：** 用 Touch ID（或密碼）確認。如果取消，Caffeine 仍會啟用，但闔蓋運作只在接通電源時有效。Caffeine 在啟動時自動啟用（「啟動 Caffeine 時自動啟用」）會略過這一步，登入時不會跳出提示；電池模式會在你下次手動啟用時開始。
+
+**睡眠一定會還原**：停用 Caffeine、計時結束、結束 Caffeine（包含 `killall Caffeine`），以及當機後下次啟動時。使用電池時，電量低於 **電池電量低於此值時恢復睡眠** 的設定值（預設 20%）也會自動關閉。只要恢復睡眠時蓋子已經闔上、而且沒有接外接螢幕，Mac 就會直接進入睡眠。
+
+> ⚠️ 闔蓋模式開啟時，Mac 完全不會睡眠 — 不要讓它在包包裡繼續運作。
+
+在終端機檢查目前設定（闔蓋模式開啟時顯示 `Yes`）：
 
 ```bash
-pmset -g assertions | grep -i caffeine
+ioreg -rn IOPMrootDomain -d 1 | grep '"SleepDisabled"'
 ```
 
-啟用且開關開啟時，應該會看到三條：
+移除規則（下次使用此功能時 Caffeine 會再詢問一次）：
 
-```
-pid 12345(Caffeine): … PreventUserIdleDisplaySleep …
-pid 12345(Caffeine): … PreventUserIdleSystemSleep …
-pid 12345(Caffeine): … PreventSystemSleep …
+```bash
+sudo rm /etc/sudoers.d/caffeine-lid
 ```
 
-把闔蓋開關關掉，第三條就會消失。
+如果睡眠一直沒有恢復（例如在闔蓋模式開啟時刪除了 Caffeine）：
 
-> ⚠️ macOS 的「闔蓋即睡眠」策略是 kernel 強制執行的。電池模式下，無論任何 IOPMAssertion，系統仍可能在闔蓋後進入睡眠。要可靠地闔蓋運作，請接上電源。
+```bash
+sudo pmset disablesleep 0
+```
 
 ## 支援的語言
 

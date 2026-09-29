@@ -8,7 +8,7 @@
 
 set -uo pipefail
 
-BUNDLE_ID="net.domzilla.caffeine"
+BUNDLE_ID="io.github.bubbleee030.caffeine"
 
 echo "==> Quitting Caffeine"
 osascript -e "tell application id \"$BUNDLE_ID\" to quit" 2>/dev/null || true

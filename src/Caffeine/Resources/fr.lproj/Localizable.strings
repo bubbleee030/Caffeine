@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Empêche les apps de devenir inactives et l'économiseur d'écran de démarrer.";
 "Launch at Login" = "Lancer à l'ouverture de session";
 "Allow Mac to run with lid closed" = "Autoriser le Mac à fonctionner capot fermé";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Fonctionne uniquement sur secteur. Sur batterie, macOS peut se mettre en veille lorsque le capot est fermé.";
 "Close" = "Fermer";
 
 /* Menu additions */
@@ -46,3 +45,16 @@
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine empêche la mise en veille";
 
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "Fonctionne aussi sur batterie. Touch ID ou votre mot de passe est requis à chaque activation de Caffeine.";
+"Restore sleep on battery below:" = "Rétablir la veille sur batterie en dessous de :";
+"Closed-lid mode is on" = "Le mode capot fermé est activé";
+"Closed-lid mode on battery wasn't enabled." = "Le mode capot fermé sur batterie n’a pas été activé.";
+"Closed-lid mode was turned off because the battery is low." = "Le mode capot fermé a été désactivé car la batterie est faible.";
+"Allow closed-lid mode on battery?" = "Autoriser le mode capot fermé sur batterie ?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine vous demandera une seule fois votre mot de passe administrateur pour installer une règle qui lui permet uniquement d’activer et de désactiver la veille à la fermeture du capot. Vous pouvez supprimer cette règle à tout moment dans Terminal avec :\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Continuer";
+"Cancel" = "Annuler";
+"enable closed-lid mode" = "activer le mode capot fermé";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine a besoin de votre mot de passe administrateur une seule fois pour autoriser le mode capot fermé sur batterie.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine n’a pas pu réactiver la veille. Pour corriger le problème, exécutez dans Terminal :\nsudo pmset disablesleep 0";

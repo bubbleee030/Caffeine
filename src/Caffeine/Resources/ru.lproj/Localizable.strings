@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Предотвращает переход приложений в неактивный режим и запуск заставки.";
 "Launch at Login" = "Запускать при входе в систему";
 "Allow Mac to run with lid closed" = "Разрешить работу при закрытой крышке";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Работает только от сети. От аккумулятора macOS может уснуть при закрытии крышки.";
 "Close" = "Закрыть";
 
 /* Menu additions */
@@ -45,3 +44,17 @@
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine предотвращает переход в сон";
+
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "Работает и от аккумулятора. При каждом включении Caffeine требуется Touch ID или пароль.";
+"Restore sleep on battery below:" = "Восстанавливать сон от аккумулятора ниже:";
+"Closed-lid mode is on" = "Режим закрытой крышки включён";
+"Closed-lid mode on battery wasn't enabled." = "Режим закрытой крышки от аккумулятора не был включён.";
+"Closed-lid mode was turned off because the battery is low." = "Режим закрытой крышки выключен из-за низкого заряда аккумулятора.";
+"Allow closed-lid mode on battery?" = "Разрешить режим закрытой крышки от аккумулятора?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine один раз запросит пароль администратора, чтобы установить правило, которое разрешает ему только включать и выключать сон при закрытии крышки. Удалить правило можно в любой момент в Терминале командой:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Продолжить";
+"Cancel" = "Отменить";
+"enable closed-lid mode" = "включить режим закрытой крышки";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine нужен пароль администратора один раз, чтобы разрешить режим закрытой крышки от аккумулятора.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine не удалось снова включить сон. Чтобы исправить это, выполните в Терминале:\nsudo pmset disablesleep 0";

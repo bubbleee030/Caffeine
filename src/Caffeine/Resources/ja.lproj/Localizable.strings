@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "アプリが非アクティブになるのを防ぎ、スクリーンセーバーの起動を防止します。";
 "Launch at Login" = "ログイン時に起動";
 "Allow Mac to run with lid closed" = "蓋を閉じた状態でも実行を維持";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "電源接続時のみ有効です。バッテリー駆動時は蓋を閉じると macOS がスリープすることがあります。";
 "Close" = "閉じる";
 
 /* Menu additions */
@@ -46,3 +45,16 @@
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine がスリープを防ぎます";
 
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "バッテリー駆動時にも使えます。Caffeine を有効にするたびに Touch ID またはパスワードが必要です。";
+"Restore sleep on battery below:" = "バッテリー残量がこれ以下でスリープを復元:";
+"Closed-lid mode is on" = "蓋を閉じた状態での実行がオンです";
+"Closed-lid mode on battery wasn't enabled." = "バッテリー駆動時の蓋を閉じた状態での実行を有効にできませんでした。";
+"Closed-lid mode was turned off because the battery is low." = "バッテリー残量が少ないため、蓋を閉じた状態での実行をオフにしました。";
+"Allow closed-lid mode on battery?" = "バッテリー駆動時に蓋を閉じた状態での実行を許可しますか?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine は一度だけ管理者パスワードを求め、蓋を閉じたときのスリープのオン/オフ切り替えのみを許可するルールをインストールします。このルールは「ターミナル」で次のコマンドを実行すればいつでも削除できます:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "続ける";
+"Cancel" = "キャンセル";
+"enable closed-lid mode" = "蓋を閉じた状態での実行を有効に";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "バッテリー駆動時に蓋を閉じた状態での実行を許可するため、Caffeine は一度だけ管理者パスワードを必要とします。";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine はスリープを元に戻せませんでした。修正するには「ターミナル」で次を実行してください:\nsudo pmset disablesleep 0";

@@ -3,8 +3,9 @@
 ## Project Overview
 macOS menu bar app that prevents your Mac from sleeping.
 
-This repository is a fork (`bubbleee030/Caffeine`) of `domzilla/Caffeine`. The bundle identifier is still
-`net.domzilla.caffeine`, so the fork and the upstream app share preferences, login-item and TCC state on the same Mac.
+This repository is a fork (`bubbleee030/Caffeine`) of `domzilla/Caffeine`. Its bundle identifier is
+`io.github.bubbleee030.caffeine` (upstream uses `net.domzilla.caffeine`), so the two apps keep separate preferences,
+login items and privacy permissions.
 
 ## Tech Stack
 - **Language**: Swift 5 language mode, with `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` and
@@ -14,6 +15,8 @@ This repository is a fork (`bubbleee030/Caffeine`) of `domzilla/Caffeine`. The b
   - [Sparkle](https://github.com/sparkle-project/Sparkle) — updates
   - [DZFoundation](https://github.com/domzilla/DZFoundation) — debug logging
 - **Minimum Deployment**: macOS 14.6
+- **Not sandboxed** (Hardened Runtime only): closed-lid mode on battery runs `sudo -n /usr/bin/pmset disablesleep 0|1`
+  through the sudoers rule `/etc/sudoers.d/caffeine-lid` (see `LidSleepController`)
 - **Project**: `src/Caffeine.xcodeproj`
 
 ## Repository Layout
@@ -63,6 +66,37 @@ swiftformat .
 - Model files shared with the package must not assume the app's default MainActor isolation: mark types `@MainActor`
   explicitly and don't reference main-actor `shared` singletons from default arguments.
 - `LocalizationTests` fails if any locale is missing a key — add new keys to its `expectedKeys` list.
+- `scripts/integration-test.sh` exercises closed-lid mode on battery (including crash recovery) only when
+  `/etc/sudoers.d/caffeine-lid` exists; otherwise those cases are skipped. The DEBUG-only
+  `CA_TEST_AUTOACTIVATE=lid-battery` hook auto-approves the Touch ID step.
+
+## Releasing (Sparkle updates)
+Updates are served from `appcast.xml` on `master`
+(`SUFeedURL = https://raw.githubusercontent.com/bubbleee030/Caffeine/master/appcast.xml`). Each update is signed with
+the EdDSA private key stored in the maintainer's login Keychain (created with Sparkle's `generate_keys`); its public
+half is `SUPublicEDKey` in `Info.plist`. **Never regenerate or lose the private key** — installed copies would reject
+every future update.
+
+Sparkle's tools live in `~/Library/Developer/Xcode/DerivedData/Caffeine-*/SourcePackages/artifacts/sparkle/Sparkle/bin/`.
+
+1. Bump `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in Xcode, move the `[Unreleased]` changelog entries under the new
+   version, commit.
+2. Xcode → Product → Archive → Distribute App → Direct Distribution (Developer ID, notarized) → export `Caffeine.app`.
+3. Zip it and generate the signed appcast entry:
+   ```bash
+   VERSION=1.8.0
+   SPARKLE_BIN=$(echo ~/Library/Developer/Xcode/DerivedData/Caffeine-*/SourcePackages/artifacts/sparkle/Sparkle/bin)
+   mkdir -p build/updates && cp appcast.xml build/updates/
+   ditto -c -k --keepParent /path/to/exported/Caffeine.app "build/updates/Caffeine-$VERSION.zip"
+   "$SPARKLE_BIN/generate_appcast" \
+       --download-url-prefix "https://github.com/bubbleee030/Caffeine/releases/download/v$VERSION/" \
+       build/updates
+   ```
+4. Publish the release, then the feed (the feed must only point at assets that already exist):
+   ```bash
+   gh release create "v$VERSION" "build/updates/Caffeine-$VERSION.zip" --title "Caffeine $VERSION" --notes-file <notes>
+   cp build/updates/appcast.xml appcast.xml && git commit -am "Update appcast for $VERSION" && git push
+   ```
 
 ## Changelog (MANDATORY)
 All important user-facing changes (fixes, additions, removals, changes) must be recorded under `## [Unreleased]` in

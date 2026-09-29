@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "防止 App 變為非活躍狀態，並阻止螢幕保護程式啟動。";
 "Launch at Login" = "登入時啟動";
 "Allow Mac to run with lid closed" = "闔蓋時保持運作";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "僅在接通電源時生效。使用電池時，macOS 仍可能在闔蓋後進入睡眠。";
 "Close" = "關閉";
 
 /* Menu additions */
@@ -45,3 +44,17 @@
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine 防止睡眠";
+
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "使用電池時也有效。每次啟用 Caffeine 都需要 Touch ID 或密碼。";
+"Restore sleep on battery below:" = "電池電量低於此值時恢復睡眠：";
+"Closed-lid mode is on" = "闔蓋模式已開啟";
+"Closed-lid mode on battery wasn't enabled." = "未能開啟電池供電時的闔蓋模式。";
+"Closed-lid mode was turned off because the battery is low." = "電池電量不足，已關閉闔蓋模式。";
+"Allow closed-lid mode on battery?" = "要允許在使用電池時開啟闔蓋模式嗎？";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine 會要求輸入一次管理者密碼，以安裝一條只允許它開啟和關閉闔蓋睡眠的規則。你可以隨時在「終端機」中用以下指令移除這條規則：\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "繼續";
+"Cancel" = "取消";
+"enable closed-lid mode" = "啟用闔蓋模式";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine 需要一次管理者密碼，才能允許在使用電池時開啟闔蓋模式。";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine 無法重新開啟睡眠。若要修正，請在「終端機」中執行：\nsudo pmset disablesleep 0";

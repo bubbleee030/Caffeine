@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Impedisce alle app di diventare inattive e l'avvio del salvaschermo.";
 "Launch at Login" = "Avvia all'accesso";
 "Allow Mac to run with lid closed" = "Consenti al Mac di funzionare con il coperchio chiuso";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Funziona solo con alimentazione di rete. Con la batteria, macOS può andare in stop quando il coperchio è chiuso.";
 "Close" = "Chiudi";
 
 /* Menu additions */
@@ -45,3 +44,17 @@
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine impedisce lo stop";
+
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "Funziona anche a batteria. Richiede Touch ID o la tua password ogni volta che Caffeine si attiva.";
+"Restore sleep on battery below:" = "Ripristina lo stop a batteria sotto il:";
+"Closed-lid mode is on" = "La modalità coperchio chiuso è attiva";
+"Closed-lid mode on battery wasn't enabled." = "La modalità coperchio chiuso a batteria non è stata attivata.";
+"Closed-lid mode was turned off because the battery is low." = "La modalità coperchio chiuso è stata disattivata perché la batteria è scarica.";
+"Allow closed-lid mode on battery?" = "Consentire la modalità coperchio chiuso a batteria?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine ti chiederà una sola volta la password di amministratore per installare una regola che gli consente soltanto di attivare e disattivare lo stop alla chiusura del coperchio. Puoi rimuovere la regola in qualsiasi momento dal Terminale con:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Continua";
+"Cancel" = "Annulla";
+"enable closed-lid mode" = "attivare la modalità coperchio chiuso";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine ha bisogno della password di amministratore una sola volta per consentire la modalità coperchio chiuso a batteria.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine non è riuscito a riattivare lo stop. Per risolvere, esegui nel Terminale:\nsudo pmset disablesleep 0";
