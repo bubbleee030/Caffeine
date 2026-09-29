@@ -25,6 +25,7 @@ let package = Package(
                 "BatteryMonitor.swift",
                 "LaunchAtLoginManager.swift",
                 "LaunchItemBackend.swift",
+                "LidSleepController.swift",
                 "PowerAssertionBackend.swift",
                 "ProcessRunner.swift",
                 "RootDomain.swift",
