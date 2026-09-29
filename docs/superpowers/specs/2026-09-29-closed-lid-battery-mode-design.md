@@ -66,8 +66,8 @@ LidSleepController ──▶ SleepSettingBackend   (pmset + sudoers)
 
 ```swift
 protocol SleepSettingBackend: AnyObject {
-    /// `SleepDisabled` from `pmset -g`; nil if it couldn't be read.
-    func isSleepDisabled() async -> Bool?
+    /// `SleepDisabled` from IOPMrootDomain (`pmset -g` omits it while 0); nil if unreadable.
+    func isSleepDisabled() -> Bool?
     /// `sudo -n /usr/bin/pmset disablesleep 0|1`. Throws if sudo refuses or pmset fails.
     func setSleepDisabled(_ disabled: Bool) async throws
     /// Whether `/etc/sudoers.d/caffeine-lid` exists. (`sudo -n -l` is not used: a cached sudo timestamp
@@ -145,7 +145,9 @@ protocol BatteryMonitor: AnyObject {
   - `setAllowLidClose(_:)`: on → engage if active; off → restore.
   - `init` → `recoverOnLaunch()` before any auto-activation.
 - `MenuBarController.cleanup()` (from `applicationWillTerminate`) → `restore(synchronous: true)`.
-- Restore triggers, complete list: deactivate, timer expiry, quit, toggle off, low battery, launch recovery.
+- `AppDelegate` routes SIGTERM (`kill`, `killall`) to `NSApp.terminate`, so it also reaches `applicationWillTerminate`
+  instead of ending the process with sleep still disabled.
+- Restore triggers, complete list: deactivate, timer expiry, quit, SIGTERM, toggle off, low battery, launch recovery.
 
 ### 4. UI (`PreferencesView`, menu)
 
@@ -175,7 +177,7 @@ All new strings are added to all 14 locales and to `LocalizationTests.expectedKe
 | Situation | Behavior |
 |---|---|
 | User cancels the setup prompt or Touch ID | Caffeine stays active; lid mode AC-only; failure text shown |
-| `sudo -n` refuses (rule removed/altered) | Treated as missing rule → setup runs again on next engage |
+| `sudo -n` refuses (rule file present but altered) | `commandFailed`; README explains deleting the file to redo setup |
 | `pmset` fails enabling | Restore attempted, flag cleared, failure text shown |
 | `pmset` fails restoring | Flag kept, so the next launch retries; logged |
 | Crash / force quit while on | Next launch restores (flag set + `SleepDisabled 1`) |
@@ -192,11 +194,11 @@ No manual QA; each milestone ends green and is committed.
 - recoverOnLaunch: flag+disabled → restore; flag+enabled → clear only; no flag → untouched
 - battery guard: trips only when on battery and ≤ threshold; calls `sleepNow()` only when the lid is closed; blocks engage
 - sudoers rule builder: exact text; rejects invalid user names
-- `pmset -g` parser: reads `SleepDisabled 0/1`; missing line → nil
+- IOPMrootDomain read: `SleepDisabled` readable; unknown key → nil
 
 **Integration** (`scripts/integration-test.sh`): new case `CA_TEST_AUTOACTIVATE=lid-battery` using a DEBUG-only
-authenticator that always succeeds (compiled out of Release). It asserts `pmset -g` shows `SleepDisabled 1` while
-active and `0` after the app is terminated. Skipped with a notice when `/etc/sudoers.d/caffeine-lid` doesn't
+authenticator that always succeeds (compiled out of Release). It asserts IOPMrootDomain's `SleepDisabled` is `Yes` while
+active and `No` after the app is terminated (SIGTERM), and that a relaunch restores it after `kill -9`. Skipped with a notice when `/etc/sudoers.d/caffeine-lid` doesn't
 exist (rule not installed).
 
 ## Milestones
