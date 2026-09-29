@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The bundle identifier is now `io.github.bubbleee030.caffeine`, so this fork no longer shares settings with the original Caffeine. Preferences, "Launch at Login" and the Accessibility permission for "Keep apps active" need to be set up again once.
+
 ### Fixed
 
 - "Keep apps active" no longer moves the pointer to the wrong position on setups with multiple displays of different heights.

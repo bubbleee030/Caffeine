@@ -3,8 +3,9 @@
 ## Project Overview
 macOS menu bar app that prevents your Mac from sleeping.
 
-This repository is a fork (`bubbleee030/Caffeine`) of `domzilla/Caffeine`. The bundle identifier is still
-`net.domzilla.caffeine`, so the fork and the upstream app share preferences, login-item and TCC state on the same Mac.
+This repository is a fork (`bubbleee030/Caffeine`) of `domzilla/Caffeine`. Its bundle identifier is
+`io.github.bubbleee030.caffeine` (upstream uses `net.domzilla.caffeine`), so the two apps keep separate preferences,
+login items and privacy permissions.
 
 ## Tech Stack
 - **Language**: Swift 5 language mode, with `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` and
