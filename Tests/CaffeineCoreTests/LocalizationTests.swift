@@ -50,7 +50,17 @@ final class LocalizationTests: XCTestCase {
         "Prevents apps from becoming inactive and the screen saver from starting.",
         "Launch at Login",
         "Allow Mac to run with lid closed",
-        "Works on AC power. On battery, macOS may still sleep when the lid is closed.",
+        "Works on battery too. Requires Touch ID or your password each time Caffeine activates.",
+        "Restore sleep on battery below:",
+        "Closed-lid mode is on",
+        "Closed-lid mode on battery wasn't enabled.",
+        "Closed-lid mode was turned off because the battery is low.",
+        "Allow closed-lid mode on battery?",
+        "Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid",
+        "Continue",
+        "Cancel",
+        "enable closed-lid mode",
+        "Caffeine needs your administrator password once to allow closed-lid mode on battery.",
         "Close",
         // Menu additions
         "Activate for", "Welcome to Caffeine",
@@ -81,6 +91,19 @@ final class LocalizationTests: XCTestCase {
             XCTAssertTrue(
                 missing.isEmpty,
                 "\(locale) is missing \(missing.count) key(s): \(missing.sorted())"
+            )
+        }
+    }
+
+    func testRemovedKeysAreGone() {
+        for locale in self.expectedLocales {
+            let url = self.resourcesURL
+                .appendingPathComponent("\(locale).lproj")
+                .appendingPathComponent("Localizable.strings")
+            let dict = NSDictionary(contentsOf: url) as? [String: String] ?? [:]
+            XCTAssertNil(
+                dict["Works on AC power. On battery, macOS may still sleep when the lid is closed."],
+                "\(locale) still has the AC-only footnote"
             )
         }
     }

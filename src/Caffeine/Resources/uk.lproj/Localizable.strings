@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Не дає застосункам переходити в неактивний режим і запускатися заставці.";
 "Launch at Login" = "Запускати під час входу";
 "Allow Mac to run with lid closed" = "Дозволити роботу із закритою кришкою";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Працює лише від мережі. Від акумулятора macOS може заснути після закриття кришки.";
 "Close" = "Закрити";
 
 /* Menu additions */
@@ -46,3 +45,15 @@
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine запобігає переходу в режим сну";
 
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "Працює й від акумулятора. Щоразу під час увімкнення Caffeine потрібен Touch ID або пароль.";
+"Restore sleep on battery below:" = "Відновлювати сон від акумулятора нижче:";
+"Closed-lid mode is on" = "Режим закритої кришки ввімкнено";
+"Closed-lid mode on battery wasn't enabled." = "Режим закритої кришки від акумулятора не було ввімкнено.";
+"Closed-lid mode was turned off because the battery is low." = "Режим закритої кришки вимкнено через низький заряд акумулятора.";
+"Allow closed-lid mode on battery?" = "Дозволити режим закритої кришки від акумулятора?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine один раз попросить пароль адміністратора, щоб установити правило, яке дозволяє йому лише вмикати й вимикати сон під час закриття кришки. Видалити правило можна будь-коли в Терміналі командою:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Продовжити";
+"Cancel" = "Скасувати";
+"enable closed-lid mode" = "увімкнути режим закритої кришки";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine потрібен пароль адміністратора один раз, щоб дозволити режим закритої кришки від акумулятора.";

@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Voorkomt dat apps inactief worden en dat de schermbeveiliging start.";
 "Launch at Login" = "Starten bij aanmelden";
 "Allow Mac to run with lid closed" = "Mac met gesloten deksel laten draaien";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Werkt alleen op netvoeding. Op batterij kan macOS in slaap gaan wanneer het deksel gesloten is.";
 "Close" = "Sluiten";
 
 /* Menu additions */
@@ -45,3 +44,16 @@
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine voorkomt sluimerstand";
+
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "Werkt ook op batterij. Vereist elke keer dat Caffeine wordt geactiveerd Touch ID of je wachtwoord.";
+"Restore sleep on battery below:" = "Sluimerstand herstellen op batterij onder:";
+"Closed-lid mode is on" = "Modus met gesloten deksel is aan";
+"Closed-lid mode on battery wasn't enabled." = "Modus met gesloten deksel op batterij is niet ingeschakeld.";
+"Closed-lid mode was turned off because the battery is low." = "Modus met gesloten deksel is uitgeschakeld omdat de batterij bijna leeg is.";
+"Allow closed-lid mode on battery?" = "Modus met gesloten deksel op batterij toestaan?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine vraagt één keer om je beheerderswachtwoord om een regel te installeren waarmee het alleen de sluimerstand bij gesloten deksel kan in- en uitschakelen. Je kunt de regel altijd verwijderen in Terminal met:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Ga door";
+"Cancel" = "Annuleer";
+"enable closed-lid mode" = "de modus met gesloten deksel in te schakelen";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine heeft één keer je beheerderswachtwoord nodig om de modus met gesloten deksel op batterij toe te staan.";

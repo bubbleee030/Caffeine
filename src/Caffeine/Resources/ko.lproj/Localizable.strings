@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "앱이 비활성 상태가 되거나 화면 보호기가 시작되는 것을 방지합니다.";
 "Launch at Login" = "로그인 시 시작";
 "Allow Mac to run with lid closed" = "덮개를 닫아도 실행 유지";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "전원이 연결된 경우에만 작동합니다. 배터리 사용 시에는 덮개를 닫으면 macOS가 잠들 수 있습니다.";
 "Close" = "닫기";
 
 /* Menu additions */
@@ -45,3 +44,16 @@
 
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine이 잠자기를 방지합니다";
+
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "배터리 사용 시에도 작동합니다. Caffeine을 활성화할 때마다 Touch ID 또는 암호가 필요합니다.";
+"Restore sleep on battery below:" = "배터리가 다음 이하이면 잠자기 복원:";
+"Closed-lid mode is on" = "덮개 닫힘 모드가 켜져 있습니다";
+"Closed-lid mode on battery wasn't enabled." = "배터리 사용 시 덮개 닫힘 모드가 활성화되지 않았습니다.";
+"Closed-lid mode was turned off because the battery is low." = "배터리가 부족하여 덮개 닫힘 모드가 꺼졌습니다.";
+"Allow closed-lid mode on battery?" = "배터리 사용 시 덮개 닫힘 모드를 허용하겠습니까?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine은 덮개를 닫을 때의 잠자기를 켜고 끄는 것만 허용하는 규칙을 설치하기 위해 관리자 암호를 한 번만 요청합니다. 터미널에서 다음 명령으로 언제든지 규칙을 제거할 수 있습니다:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "계속";
+"Cancel" = "취소";
+"enable closed-lid mode" = "덮개 닫힘 모드를 활성화";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "배터리 사용 시 덮개 닫힘 모드를 허용하려면 Caffeine에 관리자 암호가 한 번 필요합니다.";

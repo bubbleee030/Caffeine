@@ -33,7 +33,6 @@
 "Prevents apps from becoming inactive and the screen saver from starting." = "Prevents apps from becoming inactive and the screen saver from starting.";
 "Launch at Login" = "Launch at Login";
 "Allow Mac to run with lid closed" = "Allow Mac to run with lid closed";
-"Works on AC power. On battery, macOS may still sleep when the lid is closed." = "Works on AC power. On battery, macOS may still sleep when the lid is closed.";
 "Close" = "Close";
 
 /* Menu additions */
@@ -46,3 +45,15 @@
 /* System messages */
 "Caffeine prevents sleep" = "Caffeine prevents sleep";
 
+/* Closed-lid mode on battery */
+"Works on battery too. Requires Touch ID or your password each time Caffeine activates." = "Works on battery too. Requires Touch ID or your password each time Caffeine activates.";
+"Restore sleep on battery below:" = "Restore sleep on battery below:";
+"Closed-lid mode is on" = "Closed-lid mode is on";
+"Closed-lid mode on battery wasn't enabled." = "Closed-lid mode on battery wasn't enabled.";
+"Closed-lid mode was turned off because the battery is low." = "Closed-lid mode was turned off because the battery is low.";
+"Allow closed-lid mode on battery?" = "Allow closed-lid mode on battery?";
+"Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid" = "Caffeine will ask for your administrator password once to install a rule that only lets it turn lid-close sleep on and off. You can remove the rule at any time in Terminal with:\nsudo rm /etc/sudoers.d/caffeine-lid";
+"Continue" = "Continue";
+"Cancel" = "Cancel";
+"enable closed-lid mode" = "enable closed-lid mode";
+"Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine needs your administrator password once to allow closed-lid mode on battery.";
