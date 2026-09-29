@@ -40,7 +40,7 @@ Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、暗
 
 **第一次使用：** Caffeine 會先說明接下來的動作，然後 macOS 會要求輸入**一次**管理者密碼。Caffeine 會安裝 `/etc/sudoers.d/caffeine-lid`，這條規則只允許它執行 `pmset disablesleep 0` 和 `pmset disablesleep 1`，其他一概不行。
 
-**每次啟用：** 用 Touch ID（或密碼）確認。如果取消，Caffeine 仍會啟用，但闔蓋運作只在接通電源時有效。
+**每次啟用：** 用 Touch ID（或密碼）確認。如果取消，Caffeine 仍會啟用，但闔蓋運作只在接通電源時有效。Caffeine 在啟動時自動啟用（「啟動 Caffeine 時自動啟用」）會略過這一步，登入時不會跳出提示；電池模式會在你下次手動啟用時開始。
 
 **睡眠一定會還原**：停用 Caffeine、計時結束、結束 Caffeine（包含 `killall Caffeine`），以及當機後下次啟動時。使用電池時，電量低於 **電池電量低於此值時恢復睡眠** 的設定值（預設 20%）也會自動關閉。只要恢復睡眠時蓋子已經闔上、而且沒有接外接螢幕，Mac 就會直接進入睡眠。
 

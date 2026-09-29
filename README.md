@@ -40,7 +40,7 @@ Switch on **Allow Mac to run with lid closed**, then activate Caffeine (click th
 
 **First time:** Caffeine explains what it's about to do, then macOS asks for your administrator password **once**. Caffeine installs `/etc/sudoers.d/caffeine-lid`, a rule that only lets it run `pmset disablesleep 0` and `pmset disablesleep 1` — nothing else.
 
-**Every activation:** confirm with Touch ID (or your password). If you cancel, Caffeine still activates, and lid-closed operation works on AC power only.
+**Every activation:** confirm with Touch ID (or your password). If you cancel, Caffeine still activates, and lid-closed operation works on AC power only. When Caffeine activates by itself at launch ("Activate when starting Caffeine"), it skips this step — no prompt at login — so battery mode starts the next time you activate it yourself.
 
 **Sleep is always restored** when you deactivate Caffeine, when its timer ends, when you quit it (including `killall Caffeine`), and — if it crashed — the next time it starts. On battery, it also turns off below the level set in **Restore sleep on battery below** (default 20 %). Whenever sleep is restored with the lid already closed and no external display connected, the Mac goes to sleep.
 

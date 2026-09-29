@@ -55,8 +55,11 @@ class CaffeineViewModel: ObservableObject {
         #endif
 
         // Check if we should activate at launch
+        // Automatic activation never engages closed-lid mode on battery, so
+        // logging in doesn't pop up a Touch ID prompt nobody asked for. The
+        // AC lid-close assertion still applies.
         if UserDefaults.standard.bool(forKey: PreferenceKeys.activateAtLaunch) {
-            self.activate()
+            self.activate(engagesLidSleep: false)
         }
 
         // Show preferences on first launch
@@ -82,7 +85,13 @@ class CaffeineViewModel: ObservableObject {
     ///   - allowLidCloseOverride: if non-nil, used instead of the stored
     ///     `allowLidClose` preference. Intended for DEBUG test hooks that
     ///     want to drive a known state without mutating UserDefaults.
-    func activate(withTimeout timeout: TimeInterval? = nil, allowLidCloseOverride: Bool? = nil) {
+    ///   - engagesLidSleep: `false` skips closed-lid mode on battery (and its
+    ///     Touch ID prompt) for activations the user didn't trigger.
+    func activate(
+        withTimeout timeout: TimeInterval? = nil,
+        allowLidCloseOverride: Bool? = nil,
+        engagesLidSleep: Bool = true
+    ) {
         // Use default duration if no timeout specified
         let duration: TimeInterval?
         if let timeout {
@@ -137,7 +146,7 @@ class CaffeineViewModel: ObservableObject {
         let allowLidClose = allowLidCloseOverride
             ?? UserDefaults.standard.bool(forKey: PreferenceKeys.allowLidClose)
         SleepPreventionManager.shared.preventSleep(allowLidClose: allowLidClose)
-        if allowLidClose, self.shouldEngageLidSleep {
+        if allowLidClose, engagesLidSleep, self.shouldEngageLidSleep {
             self.lidSleep.requestEngage()
         }
 
