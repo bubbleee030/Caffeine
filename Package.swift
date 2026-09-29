@@ -22,13 +22,16 @@ let package = Package(
             name: "CaffeineCore",
             path: "src/Caffeine/Classes/Models",
             sources: [
+                "BatteryMonitor.swift",
                 "LaunchAtLoginManager.swift",
                 "LaunchItemBackend.swift",
                 "PowerAssertionBackend.swift",
                 "ProcessRunner.swift",
                 "RootDomain.swift",
                 "SleepPreventionManager.swift",
+                "SleepSettingBackend.swift",
                 "SudoersRule.swift",
+                "UserAuthenticator.swift",
             ]
         ),
         .testTarget(
