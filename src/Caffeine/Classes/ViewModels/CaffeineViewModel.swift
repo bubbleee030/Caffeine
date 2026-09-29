@@ -48,8 +48,8 @@ class CaffeineViewModel: ObservableObject {
         // early return so we don't pop the preferences window during a
         // headless integration run — add future init above this guard, not
         // below it. Compiled out in Release.
-        if let mode = ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] {
-            self.activate(allowLidCloseOverride: mode == "lid-closed" || mode == "lid-battery")
+        if TestHook.autoActivateMode != nil {
+            self.activate(allowLidCloseOverride: TestHook.allowsLidClose)
             return
         }
         #endif
@@ -218,8 +218,8 @@ class CaffeineViewModel: ObservableObject {
     /// administrator or Touch ID prompts.
     private var shouldEngageLidSleep: Bool {
         #if DEBUG
-        if let mode = ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] {
-            return mode == "lid-battery"
+        if TestHook.autoActivateMode != nil {
+            return TestHook.engagesLidSleep
         }
         #endif
         return true

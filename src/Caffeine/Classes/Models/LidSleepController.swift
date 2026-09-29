@@ -21,6 +21,8 @@ import Observation
 ///
 /// Requests are serialized: each `request…` call runs after the previous one
 /// finished, so a restore can't overtake an engage still waiting for Touch ID.
+/// A restore requested meanwhile also cancels that engage at its next step, so
+/// the user isn't asked to confirm a session they already ended.
 @MainActor
 @Observable
 public final class LidSleepController {
@@ -38,7 +40,16 @@ public final class LidSleepController {
         case authenticationDenied
         /// `pmset disablesleep 1` failed.
         case commandFailed
-        /// On battery at or below ``batteryThreshold``.
+        /// On battery below ``batteryThreshold``.
+        case lowBattery
+        /// `pmset disablesleep 0` failed; sleep may still be disabled.
+        case restoreFailed
+    }
+
+    enum RestoreReason {
+        /// Deactivation, timer end or toggle off.
+        case user
+        /// Battery fell below ``batteryThreshold``.
         case lowBattery
     }
 
@@ -60,6 +71,10 @@ public final class LidSleepController {
     private let defaults: UserDefaults
     @ObservationIgnored
     private var pending: Task<Void, Never>?
+    /// Set by ``requestEngage()``, cleared by ``requestRestore()``: a queued
+    /// engage stops as soon as it sees this is false.
+    @ObservationIgnored
+    private var wantsEngaged = false
 
     public init(
         settings: any SleepSettingBackend,
@@ -74,8 +89,8 @@ public final class LidSleepController {
         self.battery.onChange = { [weak self] in self?.batteryDidChange() }
     }
 
-    /// Battery percentage at or below which closed-lid mode is turned off
-    /// while running on battery.
+    /// Battery percentage below which closed-lid mode is turned off while
+    /// running on battery.
     public var batteryThreshold: Int {
         let stored = self.defaults.integer(forKey: Self.batteryThresholdKey)
         return stored > 0 ? stored : Self.defaultBatteryThreshold
@@ -89,11 +104,19 @@ public final class LidSleepController {
     }
 
     public func requestEngage() {
+        self.wantsEngaged = true
         self.enqueue { await $0.engage() }
     }
 
     public func requestRestore() {
-        self.enqueue { await $0.restore() }
+        self.wantsEngaged = false
+        self.enqueue { await $0.restore(.user) }
+    }
+
+    /// Call when the threshold preference changes, so a battery already below
+    /// the new value turns closed-lid mode off right away.
+    public func batteryThresholdDidChange() {
+        self.checkBattery()
     }
 
     /// Waits until every queued request has finished.
@@ -109,6 +132,7 @@ public final class LidSleepController {
     /// Restores sleep synchronously. Call from `applicationWillTerminate`,
     /// where queued async work would never run.
     public func restoreImmediately() {
+        self.wantsEngaged = false
         guard self.defaults.bool(forKey: Self.overrideFlagKey) else { return }
         do {
             try self.settings.setSleepDisabledImmediately(false)
@@ -126,7 +150,7 @@ public final class LidSleepController {
     // MARK: - Operations
 
     func engage() async {
-        guard self.state == .off else { return }
+        guard self.state == .off, self.wantsEngaged else { return }
         self.lastFailure = nil
         guard !self.isBatteryLow else {
             self.lastFailure = .lowBattery
@@ -137,6 +161,10 @@ public final class LidSleepController {
         if !self.settings.isPasswordlessRuleInstalled {
             guard await self.confirmSetup() else {
                 self.fail(.setupFailed)
+                return
+            }
+            guard self.wantsEngaged else {
+                self.state = .off
                 return
             }
             do {
@@ -152,6 +180,10 @@ public final class LidSleepController {
             self.fail(.authenticationDenied)
             return
         }
+        guard self.wantsEngaged else {
+            self.state = .off
+            return
+        }
 
         // Persist first: a crash during the call must not leave an
         // unrecorded system-wide override.
@@ -159,19 +191,33 @@ public final class LidSleepController {
         do {
             try await self.settings.setSleepDisabled(true)
             self.state = .on
+            // The battery may have dropped while waiting for Touch ID.
+            self.checkBattery()
         } catch {
             self.log(error)
-            await self.restoreSetting()
-            self.fail(.commandFailed)
+            let restored = await self.restoreSetting()
+            self.fail(restored ? .commandFailed : .restoreFailed)
         }
     }
 
-    func restore(sleepIfLidClosed: Bool = false) async {
+    func restore(_ reason: RestoreReason) async {
+        if reason == .user {
+            self.lastFailure = nil
+        }
         guard self.defaults.bool(forKey: Self.overrideFlagKey) || self.state != .off else { return }
         self.state = .restoring
-        await self.restoreSetting()
+        let restored = await self.restoreSetting()
         self.state = .off
-        if sleepIfLidClosed, self.battery.isLidClosed {
+        guard restored else { return }
+        if reason == .lowBattery {
+            self.lastFailure = .lowBattery
+        }
+
+        // With the lid already shut, re-enabling sleep doesn't make macOS
+        // sleep by itself (the lid-close event has passed). Put it to sleep,
+        // unless an external display is in use (clamshell mode) and this
+        // wasn't a low-battery stop.
+        if self.battery.isLidClosed, reason == .lowBattery || !self.battery.hasActiveDisplay {
             self.battery.sleepNow()
         }
     }
@@ -190,23 +236,31 @@ public final class LidSleepController {
     private var isBatteryLow: Bool {
         let snapshot = self.battery.snapshot
         guard snapshot.isOnBattery, let percent = snapshot.percent else { return false }
-        return percent <= self.batteryThreshold
+        return percent < self.batteryThreshold
     }
 
     private func batteryDidChange() {
+        self.checkBattery()
+    }
+
+    private func checkBattery() {
         guard self.state == .on, self.isBatteryLow else { return }
-        self.lastFailure = .lowBattery
-        self.enqueue { await $0.restore(sleepIfLidClosed: true) }
+        self.enqueue { await $0.restore(.lowBattery) }
     }
 
     /// Re-enables sleep. The flag is only cleared on success, so a failed
-    /// restore is retried by the next launch's recovery.
-    private func restoreSetting() async {
+    /// restore is retried by the next launch's recovery; the failure is
+    /// surfaced through ``lastFailure``.
+    @discardableResult
+    private func restoreSetting() async -> Bool {
         do {
             try await self.settings.setSleepDisabled(false)
             self.defaults.removeObject(forKey: Self.overrideFlagKey)
+            return true
         } catch {
             self.log(error)
+            self.lastFailure = .restoreFailed
+            return false
         }
     }
 

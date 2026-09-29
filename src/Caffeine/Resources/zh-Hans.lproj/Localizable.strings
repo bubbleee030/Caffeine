@@ -57,3 +57,4 @@
 "Cancel" = "取消";
 "enable closed-lid mode" = "启用合盖模式";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine 需要管理员密码一次，以允许在使用电池时开启合盖模式。";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine 无法重新开启睡眠。要修复此问题，请在“终端”中运行：\nsudo pmset disablesleep 0";

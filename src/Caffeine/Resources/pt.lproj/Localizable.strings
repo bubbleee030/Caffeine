@@ -57,3 +57,4 @@
 "Cancel" = "Cancelar";
 "enable closed-lid mode" = "ativar o modo de tampa fechada";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "O Caffeine precisa da sua palavra-passe de administrador uma única vez para permitir o modo de tampa fechada com bateria.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "O Caffeine não conseguiu reativar o repouso. Para corrigir, execute no Terminal:\nsudo pmset disablesleep 0";

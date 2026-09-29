@@ -42,7 +42,7 @@ Switch on **Allow Mac to run with lid closed**, then activate Caffeine (click th
 
 **Every activation:** confirm with Touch ID (or your password). If you cancel, Caffeine still activates, and lid-closed operation works on AC power only.
 
-**Sleep is always restored** when you deactivate Caffeine, when its timer ends, when you quit it (including `killall Caffeine`), and — if it crashed — the next time it starts. On battery, it also turns off at the level set in **Restore sleep on battery below** (default 20 %); if the lid is already closed, the Mac then goes to sleep.
+**Sleep is always restored** when you deactivate Caffeine, when its timer ends, when you quit it (including `killall Caffeine`), and — if it crashed — the next time it starts. On battery, it also turns off below the level set in **Restore sleep on battery below** (default 20 %). Whenever sleep is restored with the lid already closed and no external display connected, the Mac goes to sleep.
 
 > ⚠️ While closed-lid mode is on, the Mac won't sleep at all — don't leave it running in a bag.
 

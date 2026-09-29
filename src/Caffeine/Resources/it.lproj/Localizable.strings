@@ -57,3 +57,4 @@
 "Cancel" = "Annulla";
 "enable closed-lid mode" = "attivare la modalità coperchio chiuso";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine ha bisogno della password di amministratore una sola volta per consentire la modalità coperchio chiuso a batteria.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine non è riuscito a riattivare lo stop. Per risolvere, esegui nel Terminale:\nsudo pmset disablesleep 0";

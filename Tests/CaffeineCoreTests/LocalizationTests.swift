@@ -61,6 +61,7 @@ final class LocalizationTests: XCTestCase {
         "Cancel",
         "enable closed-lid mode",
         "Caffeine needs your administrator password once to allow closed-lid mode on battery.",
+        "Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0",
         "Close",
         // Menu additions
         "Activate for", "Welcome to Caffeine",

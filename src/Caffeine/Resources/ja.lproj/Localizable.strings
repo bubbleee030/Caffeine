@@ -57,3 +57,4 @@
 "Cancel" = "キャンセル";
 "enable closed-lid mode" = "蓋を閉じた状態での実行を有効に";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "バッテリー駆動時に蓋を閉じた状態での実行を許可するため、Caffeine は一度だけ管理者パスワードを必要とします。";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine はスリープを元に戻せませんでした。修正するには「ターミナル」で次を実行してください:\nsudo pmset disablesleep 0";

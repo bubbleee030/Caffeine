@@ -57,3 +57,4 @@
 "Cancel" = "Annuler";
 "enable closed-lid mode" = "activer le mode capot fermé";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine a besoin de votre mot de passe administrateur une seule fois pour autoriser le mode capot fermé sur batterie.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine n’a pas pu réactiver la veille. Pour corriger le problème, exécutez dans Terminal :\nsudo pmset disablesleep 0";

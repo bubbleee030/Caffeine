@@ -19,7 +19,7 @@ extension LidSleepController {
         #if DEBUG
         // Integration test hook (scripts/integration-test.sh): no Touch ID
         // prompt in a headless run. Compiled out of Release builds.
-        if ProcessInfo.processInfo.environment["CA_TEST_AUTOACTIVATE"] == "lid-battery" {
+        if TestHook.engagesLidSleep {
             return ApprovingAuthenticator()
         }
         #endif

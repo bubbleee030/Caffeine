@@ -57,3 +57,4 @@
 "Cancel" = "Abbrechen";
 "enable closed-lid mode" = "den Modus mit geschlossenem Deckel zu aktivieren";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine benötigt einmalig dein Administratorpasswort, um den Modus mit geschlossenem Deckel im Akkubetrieb zu erlauben.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine konnte den Ruhezustand nicht wieder einschalten. Führe zur Behebung im Terminal aus:\nsudo pmset disablesleep 0";

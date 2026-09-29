@@ -3,6 +3,7 @@
 //  Caffeine
 //
 
+import CoreGraphics
 import Foundation
 import IOKit.ps
 import IOKit.pwr_mgt
@@ -24,6 +25,9 @@ public struct PowerSnapshot: Equatable, Sendable {
 public protocol BatteryMonitor: AnyObject {
     var snapshot: PowerSnapshot { get }
     var isLidClosed: Bool { get }
+    /// Whether any display is active — false when the lid is closed and no
+    /// external display is connected.
+    var hasActiveDisplay: Bool { get }
     /// Called on the main thread whenever a power source changes.
     var onChange: (() -> Void)? { get set }
     /// Puts the Mac to sleep now.
@@ -84,6 +88,12 @@ public final class IOKitBatteryMonitor: BatteryMonitor {
 
     public var isLidClosed: Bool {
         RootDomain.boolProperty("AppleClamshellState") ?? false
+    }
+
+    public var hasActiveDisplay: Bool {
+        var count: UInt32 = 0
+        guard CGGetActiveDisplayList(0, nil, &count) == .success else { return true }
+        return count > 0
     }
 
     public func sleepNow() {

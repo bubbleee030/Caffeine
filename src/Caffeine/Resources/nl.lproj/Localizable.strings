@@ -57,3 +57,4 @@
 "Cancel" = "Annuleer";
 "enable closed-lid mode" = "de modus met gesloten deksel in te schakelen";
 "Caffeine needs your administrator password once to allow closed-lid mode on battery." = "Caffeine heeft één keer je beheerderswachtwoord nodig om de modus met gesloten deksel op batterij toe te staan.";
+"Caffeine couldn't turn sleep back on. To fix it, run in Terminal:\nsudo pmset disablesleep 0" = "Caffeine kon de sluimerstand niet opnieuw inschakelen. Voer ter oplossing in Terminal uit:\nsudo pmset disablesleep 0";
