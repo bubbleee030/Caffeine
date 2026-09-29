@@ -12,6 +12,21 @@ DERIVED="${DERIVED:-/tmp/caffeine-derived}"
 APP="$DERIVED/Build/Products/Debug/Caffeine.app"
 BINARY="$APP/Contents/MacOS/Caffeine"
 
+# The build below skips code signing, so it never embeds entitlements. Check
+# the signed build's settings instead: a sandboxed app can't run the sudo /
+# osascript commands closed-lid mode on battery depends on.
+echo "==> Checking the app is not sandboxed"
+if xcodebuild -project src/Caffeine.xcodeproj -scheme Caffeine -showBuildSettings 2>/dev/null \
+    | grep -qE '^[[:space:]]*ENABLE_APP_SANDBOX = YES$'; then
+    echo "FAIL: ENABLE_APP_SANDBOX = YES — remove App Sandbox in Xcode (Signing & Capabilities)"
+    exit 1
+fi
+if /usr/libexec/PlistBuddy -c "Print :com.apple.security.app-sandbox" src/Caffeine/Resources/Caffeine.entitlements >/dev/null 2>&1; then
+    echo "FAIL: Caffeine.entitlements enables com.apple.security.app-sandbox"
+    exit 1
+fi
+echo "    ok: sandbox disabled"
+
 echo "==> Building Caffeine.app (Debug)"
 xcodebuild \
     -project src/Caffeine.xcodeproj \
