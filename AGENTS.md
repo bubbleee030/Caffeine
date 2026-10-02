@@ -81,13 +81,22 @@ Sparkle's tools live in `~/Library/Developer/Xcode/DerivedData/Caffeine-*/Source
 
 1. Bump `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in Xcode, move the `[Unreleased]` changelog entries under the new
    version, commit.
-2. Xcode → Product → Archive → Distribute App → Direct Distribution (Developer ID, notarized) → export `Caffeine.app`.
+2. Archive the Release build:
+   ```bash
+   xcodebuild -project src/Caffeine.xcodeproj -scheme Caffeine -configuration Release \
+       -destination 'generic/platform=macOS' -archivePath build/Caffeine.xcarchive archive
+   ```
+   The app is `build/Caffeine.xcarchive/Products/Applications/Caffeine.app`, signed with the maintainer's
+   **Apple Development** certificate. The fork has no Developer ID certificate, so releases are **not notarized**:
+   on other Macs the first launch needs right-click → Open (or System Settings → Privacy & Security → Open Anyway),
+   and the release notes must say so. Sparkle updates are unaffected (they're verified with the EdDSA key). With a
+   Developer ID certificate, use Xcode → Product → Archive → Distribute App → Direct Distribution instead.
 3. Zip it and generate the signed appcast entry:
    ```bash
    VERSION=1.8.0
    SPARKLE_BIN=$(echo ~/Library/Developer/Xcode/DerivedData/Caffeine-*/SourcePackages/artifacts/sparkle/Sparkle/bin)
    mkdir -p build/updates && cp appcast.xml build/updates/
-   ditto -c -k --keepParent /path/to/exported/Caffeine.app "build/updates/Caffeine-$VERSION.zip"
+   ditto -c -k --keepParent build/Caffeine.xcarchive/Products/Applications/Caffeine.app "build/updates/Caffeine-$VERSION.zip"
    "$SPARKLE_BIN/generate_appcast" \
        --download-url-prefix "https://github.com/bubbleee030/Caffeine/releases/download/v$VERSION/" \
        build/updates
