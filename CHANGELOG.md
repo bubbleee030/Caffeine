@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-10-02
+
 ### Fixed
 
 - With "Allow Mac to run with lid closed" on, the built-in screen now turns off when you close the lid instead of staying lit under it. An external display, if connected, is left on.
