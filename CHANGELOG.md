@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- With "Allow Mac to run with lid closed" on, the built-in screen now turns off when you close the lid instead of staying lit under it. An external display, if connected, is left on.
+- After closed-lid mode ends with the lid already closed, the Mac now goes to sleep unless an external display is connected (it previously could stay awake because the lit built-in screen counted as an active display).
+
 ## [1.8.0] - 2026-10-02
 
 ### Added
