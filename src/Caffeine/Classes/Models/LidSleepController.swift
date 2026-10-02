@@ -87,6 +87,7 @@ public final class LidSleepController {
         self.battery = battery
         self.defaults = defaults
         self.battery.onChange = { [weak self] in self?.batteryDidChange() }
+        self.battery.onLidChange = { [weak self] in self?.lidDidChange() }
     }
 
     /// Battery percentage below which closed-lid mode is turned off while
@@ -213,11 +214,11 @@ public final class LidSleepController {
             self.lastFailure = .lowBattery
         }
 
-        // With the lid already shut, re-enabling sleep doesn't make macOS
-        // sleep by itself (the lid-close event has passed). Put it to sleep,
-        // unless an external display is in use (clamshell mode) and this
-        // wasn't a low-battery stop.
-        if self.battery.isLidClosed, reason == .lowBattery || !self.battery.hasActiveDisplay {
+        // With the lid already shut, re-enabling sleep doesn't reliably make
+        // macOS sleep by itself (the lid-close event has passed). Put it to
+        // sleep, unless an external display is in use (clamshell mode) and
+        // this wasn't a low-battery stop.
+        if self.battery.isLidClosed, reason == .lowBattery || !self.battery.hasExternalDisplay {
             self.battery.sleepNow()
         }
     }
@@ -241,6 +242,14 @@ public final class LidSleepController {
 
     private func batteryDidChange() {
         self.checkBattery()
+    }
+
+    /// Closing the lid normally turns the built-in panel off by sleeping;
+    /// with closed-lid mode on it would stay lit under the lid. Turn it off,
+    /// unless an external display is connected (the user is likely using it).
+    private func lidDidChange() {
+        guard self.state == .on, self.battery.isLidClosed, !self.battery.hasExternalDisplay else { return }
+        self.battery.turnDisplayOff()
     }
 
     private func checkBattery() {

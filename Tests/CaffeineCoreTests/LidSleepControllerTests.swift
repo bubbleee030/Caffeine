@@ -268,7 +268,7 @@ final class LidSleepControllerTests: XCTestCase {
         await self.engage()
         self.battery.snapshot = PowerSnapshot(isOnBattery: true, percent: 5)
         self.battery.isLidClosed = true
-        self.battery.hasActiveDisplay = true
+        self.battery.hasExternalDisplay = true
 
         self.battery.onChange?()
         await self.controller.waitUntilIdle()
@@ -302,10 +302,10 @@ final class LidSleepControllerTests: XCTestCase {
 
     // MARK: - Sleep after restore
 
-    func testRestoreSleepsWhenLidClosedWithoutDisplay() async {
+    func testRestoreSleepsWhenLidClosedWithoutExternalDisplay() async {
         await self.engage()
         self.battery.isLidClosed = true
-        self.battery.hasActiveDisplay = false
+        self.battery.hasExternalDisplay = false
 
         await self.restore()
 
@@ -315,7 +315,7 @@ final class LidSleepControllerTests: XCTestCase {
     func testRestoreDoesNotSleepInClamshellWithExternalDisplay() async {
         await self.engage()
         self.battery.isLidClosed = true
-        self.battery.hasActiveDisplay = true
+        self.battery.hasExternalDisplay = true
 
         await self.restore()
 
@@ -328,6 +328,43 @@ final class LidSleepControllerTests: XCTestCase {
         await self.restore()
 
         XCTAssertEqual(self.battery.sleepNowCalls, 0)
+    }
+
+    // MARK: - Display with the lid closed
+
+    func testClosingLidWhileOnTurnsDisplayOff() async {
+        await self.engage()
+        self.battery.isLidClosed = true
+
+        self.battery.onLidChange?()
+
+        XCTAssertEqual(self.battery.displayOffCalls, 1)
+    }
+
+    func testClosingLidWithExternalDisplayKeepsDisplaysOn() async {
+        await self.engage()
+        self.battery.isLidClosed = true
+        self.battery.hasExternalDisplay = true
+
+        self.battery.onLidChange?()
+
+        XCTAssertEqual(self.battery.displayOffCalls, 0)
+    }
+
+    func testClosingLidWhileOffDoesNothing() {
+        self.battery.isLidClosed = true
+
+        self.battery.onLidChange?()
+
+        XCTAssertEqual(self.battery.displayOffCalls, 0)
+    }
+
+    func testOpeningLidDoesNothing() async {
+        await self.engage()
+
+        self.battery.onLidChange?()
+
+        XCTAssertEqual(self.battery.displayOffCalls, 0)
     }
 
     // MARK: - Failures
@@ -465,11 +502,17 @@ private final class FakeAuthenticator: UserAuthenticator {
 private final class FakeBattery: BatteryMonitor {
     var snapshot = PowerSnapshot(isOnBattery: false, percent: 100)
     var isLidClosed = false
-    var hasActiveDisplay = false
+    var hasExternalDisplay = false
     var onChange: (() -> Void)?
+    var onLidChange: (() -> Void)?
     private(set) var sleepNowCalls = 0
+    private(set) var displayOffCalls = 0
 
     func sleepNow() {
         self.sleepNowCalls += 1
+    }
+
+    func turnDisplayOff() {
+        self.displayOffCalls += 1
     }
 }
