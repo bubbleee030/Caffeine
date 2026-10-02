@@ -1,6 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>Caffeine</title>
+        <item>
+            <title>1.8.0</title>
+            <pubDate>Fri, 02 Oct 2026 12:15:03 +0800</pubDate>
+            <sparkle:version>32</sparkle:version>
+            <sparkle:shortVersionString>1.8.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/bubbleee030/Caffeine/releases/download/v1.8.0/Caffeine-1.8.0.zip" length="5030855" type="application/octet-stream" sparkle:edSignature="o8XUHFbnGv+G3IOs+sIxzjEV3rncfvNRmv1z9cw6Gdy5zYGsjqtSyeKaOTujHcN3sqG4an/gbZW+FfJ0K9+qDg=="/>
+        </item>
     </channel>
 </rss>
