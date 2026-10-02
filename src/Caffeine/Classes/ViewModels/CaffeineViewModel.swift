@@ -155,9 +155,22 @@ class CaffeineViewModel: ObservableObject {
         }
     }
 
+    /// Whether "Allow Mac to run with lid closed" is on.
+    var allowsLidClose: Bool {
+        UserDefaults.standard.bool(forKey: PreferenceKeys.allowLidClose)
+    }
+
+    /// Menu shortcut for the Preferences checkbox: persists the flipped value
+    /// (PreferencesView's `@AppStorage` picks it up), then applies it.
+    func toggleAllowLidClose() {
+        let enabled = !self.allowsLidClose
+        UserDefaults.standard.set(enabled, forKey: PreferenceKeys.allowLidClose)
+        self.setAllowLidClose(enabled)
+    }
+
     /// Applies the lid-close flag to the active sleep-prevention manager.
-    /// Persistence is owned by PreferencesView's `@AppStorage` binding, so
-    /// this VM doesn't write to UserDefaults itself.
+    /// Doesn't persist it: PreferencesView's `@AppStorage` binding and
+    /// ``toggleAllowLidClose()`` do.
     func setAllowLidClose(_ enabled: Bool) {
         SleepPreventionManager.shared.updateAllowLidClose(enabled)
         if !enabled {

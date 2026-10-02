@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Restore sleep on battery below" setting (10–50 %, default 20 %): on battery, closed-lid mode turns itself off below that level, and a Mac with the lid already closed goes to sleep.
 - Normal sleep is restored when Caffeine is deactivated, its timer ends, it quits, it is killed with `kill`/`killall`, or — after a crash — the next time it starts. If the lid is already closed (and no external display is in use), the Mac then goes to sleep. If sleep can't be restored, Preferences says how to fix it.
 - The Caffeine menu shows "Closed-lid mode is on" while it is active.
+- "Allow Mac to run with lid closed" can now be switched on and off directly from the Caffeine menu (right-click the menu bar icon), without opening Preferences.
 
 ### Changed
 

@@ -147,6 +147,15 @@ class MenuBarController: NSObject {
         activateForItem.submenu = submenu
         menu.addItem(activateForItem)
 
+        let lidCloseItem = NSMenuItem(
+            title: String(localized: "Allow Mac to run with lid closed"),
+            action: #selector(toggleAllowLidClose(_:)),
+            keyEquivalent: ""
+        )
+        lidCloseItem.target = self
+        lidCloseItem.state = self.viewModel.allowsLidClose ? .on : .off
+        menu.addItem(lidCloseItem)
+
         menu.addItem(NSMenuItem.separator())
 
         // Preferences
@@ -197,6 +206,11 @@ class MenuBarController: NSObject {
         let minutes = sender.tag
         let seconds = minutes > 0 ? TimeInterval(minutes * 60) : 0
         self.viewModel.activate(withTimeout: seconds)
+    }
+
+    @objc
+    private func toggleAllowLidClose(_: NSMenuItem) {
+        self.viewModel.toggleAllowLidClose()
     }
 
     @objc
