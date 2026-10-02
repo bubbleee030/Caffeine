@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-10-02
+
 ### Added
 
 - "Allow Mac to run with lid closed" now also works on battery. Each time you activate Caffeine with it on, confirm with Touch ID (or your password). Automatic activation at launch skips this, so logging in never shows a prompt; lid-closed operation then works on AC power only until you activate Caffeine yourself. The first time, Caffeine asks for your administrator password once to install a rule that only allows turning lid-close sleep on and off.
