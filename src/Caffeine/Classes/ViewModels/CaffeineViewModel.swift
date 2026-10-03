@@ -176,7 +176,13 @@ class CaffeineViewModel: ObservableObject {
         if !enabled {
             self.lidSleep.requestRestore()
         } else if self.isActive, self.shouldEngageLidSleep {
-            self.lidSleep.requestEngage()
+            // Cancelling Touch ID right after switching the feature on means
+            // "never mind": switch it back off (the Preferences checkbox
+            // follows through @AppStorage, the menu re-reads on open).
+            self.lidSleep.requestEngage(onCancel: { [weak self] in
+                UserDefaults.standard.set(false, forKey: PreferenceKeys.allowLidClose)
+                self?.setAllowLidClose(false)
+            })
         }
     }
 

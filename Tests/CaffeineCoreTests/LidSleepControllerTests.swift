@@ -399,6 +399,61 @@ final class LidSleepControllerTests: XCTestCase {
         XCTAssertNil(self.controller.lastFailure)
     }
 
+    // MARK: - Cancel callback
+
+    func testCancelledTouchIDCallsOnCancel() async {
+        self.authenticator.approve = false
+        var cancels = 0
+
+        self.controller.requestEngage(onCancel: { cancels += 1 })
+        await self.controller.waitUntilIdle()
+
+        XCTAssertEqual(cancels, 1)
+    }
+
+    func testDeclinedSetupCallsOnCancel() async {
+        self.settings.isPasswordlessRuleInstalled = false
+        self.controller.confirmSetup = { false }
+        var cancels = 0
+
+        self.controller.requestEngage(onCancel: { cancels += 1 })
+        await self.controller.waitUntilIdle()
+
+        XCTAssertEqual(cancels, 1)
+    }
+
+    func testSuccessfulEngageDoesNotCallOnCancel() async {
+        var cancels = 0
+
+        self.controller.requestEngage(onCancel: { cancels += 1 })
+        await self.controller.waitUntilIdle()
+
+        XCTAssertEqual(cancels, 0)
+        XCTAssertEqual(self.controller.state, .on)
+    }
+
+    func testLowBatteryRefusalDoesNotCallOnCancel() async {
+        self.battery.snapshot = PowerSnapshot(isOnBattery: true, percent: 5)
+        var cancels = 0
+
+        self.controller.requestEngage(onCancel: { cancels += 1 })
+        await self.controller.waitUntilIdle()
+
+        XCTAssertEqual(cancels, 0)
+    }
+
+    func testRestoreDuringTouchIDDoesNotCallOnCancel() async {
+        self.authenticator.onAuthenticate = { [unowned self] in
+            self.controller.requestRestore()
+        }
+        var cancels = 0
+
+        self.controller.requestEngage(onCancel: { cancels += 1 })
+        await self.controller.waitUntilIdle()
+
+        XCTAssertEqual(cancels, 0)
+    }
+
     // MARK: - Request queue
 
     func testRestoreRequestedDuringAuthenticationCancelsEngage() async {

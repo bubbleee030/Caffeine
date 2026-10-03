@@ -155,6 +155,15 @@ class MenuBarController: NSObject {
         lidCloseItem.target = self
         lidCloseItem.state = self.viewModel.allowsLidClose ? .on : .off
         menu.addItem(lidCloseItem)
+        if self.viewModel.allowsLidClose, Self.lidSleepWasNotEnabled {
+            let hintItem = NSMenuItem(
+                title: String(localized: "Closed-lid mode on battery wasn't enabled."),
+                action: nil,
+                keyEquivalent: ""
+            )
+            hintItem.isEnabled = false
+            menu.addItem(hintItem)
+        }
 
         menu.addItem(NSMenuItem.separator())
 
@@ -206,6 +215,17 @@ class MenuBarController: NSObject {
         let minutes = sender.tag
         let seconds = minutes > 0 ? TimeInterval(minutes * 60) : 0
         self.viewModel.activate(withTimeout: seconds)
+    }
+
+    /// Battery mode was requested but didn't start (Touch ID or setup
+    /// cancelled, or pmset failed); lid-closed operation is AC-only.
+    private static var lidSleepWasNotEnabled: Bool {
+        switch LidSleepController.shared.lastFailure {
+        case .setupFailed, .authenticationDenied, .commandFailed:
+            true
+        case .lowBattery, .restoreFailed, nil:
+            false
+        }
     }
 
     @objc
