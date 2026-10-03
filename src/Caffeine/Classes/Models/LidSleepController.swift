@@ -104,9 +104,12 @@ public final class LidSleepController {
         self.enqueue { await $0.recoverOnLaunch() }
     }
 
-    public func requestEngage() {
+    /// - Parameter onCancel: called if the user cancels the setup alert or
+    ///   Touch ID, so a caller that just switched the feature on can switch
+    ///   it back off. Not called for other failures (e.g. low battery).
+    public func requestEngage(onCancel: (@MainActor () -> Void)? = nil) {
         self.wantsEngaged = true
-        self.enqueue { await $0.engage() }
+        self.enqueue { await $0.engage(onCancel: onCancel) }
     }
 
     public func requestRestore() {
@@ -150,7 +153,7 @@ public final class LidSleepController {
 
     // MARK: - Operations
 
-    func engage() async {
+    func engage(onCancel: (@MainActor () -> Void)? = nil) async {
         guard self.state == .off, self.wantsEngaged else { return }
         self.lastFailure = nil
         guard !self.isBatteryLow else {
@@ -162,6 +165,7 @@ public final class LidSleepController {
         if !self.settings.isPasswordlessRuleInstalled {
             guard await self.confirmSetup() else {
                 self.fail(.setupFailed)
+                onCancel?()
                 return
             }
             guard self.wantsEngaged else {
@@ -179,6 +183,7 @@ public final class LidSleepController {
 
         guard await self.authenticator.authenticate(reason: String(localized: "enable closed-lid mode")) else {
             self.fail(.authenticationDenied)
+            onCancel?()
             return
         }
         guard self.wantsEngaged else {
