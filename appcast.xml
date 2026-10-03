@@ -3,6 +3,14 @@
     <channel>
         <title>Caffeine</title>
         <item>
+            <title>1.8.2</title>
+            <pubDate>Sat, 03 Oct 2026 19:16:07 +0800</pubDate>
+            <sparkle:version>34</sparkle:version>
+            <sparkle:shortVersionString>1.8.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.6</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/bubbleee030/Caffeine/releases/download/v1.8.2/Caffeine-1.8.2.zip" length="5037484" type="application/octet-stream" sparkle:edSignature="yHLBiVLK0KXuDkyBmsu6mXYKk4LCr2U/Fpip/NRcx6P2fXptqkBG2s/pRgCVexXPhpJ1Hc1T4EcXgGrf8kg3DA=="/>
+        </item>
+        <item>
             <title>1.8.1</title>
             <pubDate>Fri, 02 Oct 2026 21:20:24 +0800</pubDate>
             <sparkle:version>33</sparkle:version>
