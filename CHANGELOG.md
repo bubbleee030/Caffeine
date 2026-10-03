@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.2] - 2026-10-03
+
 ### Fixed
 
 - Cancelling Touch ID (or the one-time setup alert) right after switching on "Allow Mac to run with lid closed" while Caffeine is active now switches the setting back off, in the menu and in Preferences.
