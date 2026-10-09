@@ -31,7 +31,7 @@ Caffeine is a small menu-bar utility that prevents your Mac from going to sleep,
 ## Tutorial: the two new toggles
 
 <p align="center">
-  <img src="docs/images/preferences.png" width="410" alt="Caffeine Preferences: Launch at Login, Allow Mac to run with lid closed, and Restore sleep on battery below">
+  <img src="docs/images/preferences.png" width="409" alt="Caffeine Preferences: Launch at Login, Allow Mac to run with lid closed, and Restore sleep on battery below">
 </p>
 
 ### Launch at Login
@@ -41,7 +41,7 @@ Open Preferences (right-click cup → *Preferences…*) and switch on **Launch a
 ### Allow Mac to run with lid closed
 
 <p align="center">
-  <img src="docs/images/menu-lid-toggle.png" width="308" alt="Caffeine menu with Allow Mac to run with lid closed checked">
+  <img src="docs/images/menu-lid-toggle.png" width="303" alt="Caffeine menu with Allow Mac to run with lid closed checked">
 </p>
 
 Switch on **Allow Mac to run with lid closed** — right-click the cup and pick it from the menu (a checkmark shows it's on), or use the checkbox in Preferences. Then activate Caffeine (click the cup). You can now close the lid and the Mac keeps running — on AC power or on battery. Useful for downloads, long renders, or streaming to an external display while the laptop is shut.
@@ -60,7 +60,7 @@ Switch on **Allow Mac to run with lid closed** — right-click the cup and pick 
 | when **activating** Caffeine with the toggle already on | Caffeine still activates, but lid-closed operation works **only when plugged in (AC power)**. The menu shows a grey *"Closed-lid mode on battery wasn't enabled."* under the toggle. Activate again and confirm Touch ID to get battery mode. |
 
 <p align="center">
-  <img src="docs/images/menu-lid-not-enabled.png" width="380" alt="Caffeine menu showing: Closed-lid mode on battery wasn't enabled">
+  <img src="docs/images/menu-lid-not-enabled.png" width="375" alt="Caffeine menu showing: Closed-lid mode on battery wasn't enabled">
 </p>
 
 **Sleep is always restored** when you deactivate Caffeine, when its timer ends, when you quit it (including `killall Caffeine`), and — if it crashed — the next time it starts. On battery, it also turns off below the level set in **Restore sleep on battery below** (default 20 %). Whenever sleep is restored with the lid already closed and no external display connected, the Mac goes to sleep.
