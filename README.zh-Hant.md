@@ -31,7 +31,7 @@ Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、螢
 ## 教學：兩個新開關
 
 <p align="center">
-  <img src="docs/images/preferences.png" width="410" alt="Caffeine 偏好設定：登入時啟動、闔蓋時保持運作、電池電量低於此值時恢復睡眠">
+  <img src="docs/images/preferences.png" width="409" alt="Caffeine 偏好設定：登入時啟動、闔蓋時保持運作、電池電量低於此值時恢復睡眠">
 </p>
 
 （截圖為英文介面；繁體中文介面的項目位置相同。）
@@ -43,7 +43,7 @@ Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、螢
 ### 闔蓋時保持運作
 
 <p align="center">
-  <img src="docs/images/menu-lid-toggle.png" width="308" alt="Caffeine 選單：闔蓋時保持運作已勾選">
+  <img src="docs/images/menu-lid-toggle.png" width="303" alt="Caffeine 選單：闔蓋時保持運作已勾選">
 </p>
 
 右鍵點杯子，在選單點選 **闔蓋時保持運作**（打勾代表已開啟），也可以用偏好設定裡的勾選框。接著點杯子啟用 Caffeine，之後闔上蓋子，Mac 仍會繼續執行，接電源或用電池都可以。適合下載檔案、長時間轉檔，或把筆電接上外接螢幕、闔起來當主機用。
@@ -62,7 +62,7 @@ Caffeine 是一個小巧的選單列工具，可以防止 Mac 進入睡眠、螢
 | 開關已開啟、**啟用** Caffeine 時 | Caffeine 仍會啟用，但闔蓋運作**只在接上電源（AC）時有效**。選單會在開關下方顯示灰色的「未能開啟電池供電時的闔蓋模式。」重新啟用一次並用 Touch ID 確認，就能開啟電池模式。 |
 
 <p align="center">
-  <img src="docs/images/menu-lid-not-enabled.png" width="380" alt="Caffeine 選單顯示：電池供電時的闔蓋模式未啟用">
+  <img src="docs/images/menu-lid-not-enabled.png" width="375" alt="Caffeine 選單顯示：電池供電時的闔蓋模式未啟用">
 </p>
 
 **睡眠一定會還原**：停用 Caffeine、計時結束、結束 Caffeine（包含 `killall Caffeine`），或當機後下次啟動時都會還原。使用電池時，只要電量低於 **電池電量低於此值時恢復睡眠** 的設定值（預設 20%），闔蓋模式也會自動關閉。還原睡眠時，如果蓋子已經闔上又沒有接外接螢幕，Mac 會直接進入睡眠。
